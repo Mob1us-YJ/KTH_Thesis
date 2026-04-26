@@ -1,0 +1,23 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k+kn}{import} \PYG{n+nn}{pandas} \PYG{k}{as} \PYG{n+nn}{pd}
+\PYG{k}{def} \PYG{n+nf}{make\PYGZus{}spreadsheet\PYGZus{}of\PYGZus{}differences}\PYG{p}{(}\PYG{n}{pds}\PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{global} \PYG{n}{school}
+    \PYG{n}{publishers}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{p}{)}
+    \PYG{n}{writer} \PYG{o}{=} \PYG{n}{pd}\PYG{o}{.}\PYG{n}{ExcelWriter}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{/tmp/}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{school}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZus{}compare\PYGZus{}duplicates.xlsx}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{engine}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{xlsxwriter}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)} \PYG{esc}{\label{listinline:ExcelWriter}}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{starting}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{idx}\PYG{p}{,} \PYG{n}{p} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{pds}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{p0}\PYG{o}{=}\PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{p}\PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+        \PYG{n}{p1}\PYG{o}{=}\PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{p}\PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{for }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{p0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ and }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{p1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{comp}\PYG{p}{,} \PYG{n}{publisher1}\PYG{p}{,} \PYG{n}{publisher2}\PYG{o}{=}\PYG{n}{compare\PYGZus{}two\PYGZus{}records\PYGZus{}silent}\PYG{p}{(}\PYG{n}{p0}\PYG{p}{,} \PYG{n}{p1}\PYG{p}{)}
+        \PYG{n}{sheet\PYGZus{}name}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{p0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{o}{.}\PYG{n}{split}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{:}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Wrote }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{sheet\PYGZus{}name}\PYG{l+s+si}{=\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{esc}{\label{listinline:UsingToexcel}}
+        \PYG{n}{comp}\PYG{o}{.}\PYG{n}{to\PYGZus{}excel}\PYG{p}{(}\PYG{n}{writer}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{o}{=}\PYG{n}{sheet\PYGZus{}name}\PYG{p}{)}
+        \PYG{n}{publishers}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{n}{publisher1}\PYG{p}{)}
+        \PYG{n}{publishers}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{n}{publisher2}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Close the Pandas Excel writer and output the Excel file.}
+    \PYG{n}{writer}\PYG{o}{.}\PYG{n}{close}\PYG{p}{(}\PYG{p}{)}\PYG{esc}{\label{listinline:closingWriter}}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{publishers}\PYG{l+s+si}{=\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{publishers}
+\end{Verbatim}

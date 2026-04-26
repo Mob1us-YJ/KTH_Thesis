@@ -1,0 +1,15 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\setforeignlanguage {english}
+\contentsline {table}{\numberline {3.1}{\ignorespaces Summary of CSI datasets used in this study.}}{11}{table.caption.7}%
+\setforeignlanguage {english}
+\contentsline {table}{\numberline {3.2}{\ignorespaces WiSe4Car annotation statistics.}}{12}{table.caption.8}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\setforeignlanguage {english}
+\contentsline {table}{\numberline {5.1}{\ignorespaces Top-1 accuracy (\%) on indoor CSI benchmarks (mean $\pm $ std, 5-fold CV).}}{21}{table.caption.9}%
+\setforeignlanguage {english}
+\contentsline {table}{\numberline {5.2}{\ignorespaces WiSe4Car classification accuracy under different training strategies.}}{22}{table.caption.10}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

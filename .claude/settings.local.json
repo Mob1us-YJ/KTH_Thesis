@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -c \"\\\\\\\\\\\\\\\\documentclass\\\\|\\\\\\\\\\\\\\\\section\\\\|\\\\\\\\\\\\\\\\chapter\" \"d:\\\\EIT\\\\Autoliv\\\\Thesis\\\\examplethesis.tex\")"
+    ]
+  }
+}

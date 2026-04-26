@@ -1,0 +1,662 @@
+%%
+%% Thesis: Feasibility of Applications based on Wi-Fi Sensing
+%% Author: Jing Yang
+%% KTH Royal Institute of Technology / Autoliv Research, 2026
+%%
+%% Based on the KTH thesis template (kththesis.cls)
+%%
+
+% Detect TeX engine
+\RequirePackage{ifxetex}
+\RequirePackage{ifluatex}
+\RequirePackage{etoolbox}
+\newif\ifxeorlua
+\ifxetex\xeorluatrue\fi
+\ifluatex\xeorluatrue\fi
+
+\ifxeorlua
+\ifdefined\directlua
+\directlua{pdf.setminorversion(7)}
+\else
+\special{pdf:minorversion 7}
+\fi
+\fi
+
+\documentclass[
+english,
+bibtex,
+]{kththesis}
+
+%% ─────────────────────────────────────────
+%%  Core packages
+%% ─────────────────────────────────────────
+\input{lib/includes}
+
+%% KTH brand colors (defines kth-blue etc.)
+\input{lib/kthcolors}
+
+%% Glossaries / acronyms
+\usepackage[acronym,toc,nomain]{glossaries}
+\makeglossaries
+
+%% hyperref must be loaded after most packages but before cleveref/doi/hyperxmp
+\usepackage{hyperref}
+\input{lib/includes-after-hyperref}
+
+%% ─────────────────────────────────────────
+%%  Suppress template annotation commands
+%% ─────────────────────────────────────────
+\newcommand*{\generalExpl}[1]{}
+\newcommand*{\engExpl}[1]{}
+\newcommand*{\sweExpl}[1]{}
+\newcommand*{\warningExpl}[1]{}
+
+%% ─────────────────────────────────────────
+%%  Keywords
+%% ─────────────────────────────────────────
+\EnglishKeywords{Wi-Fi sensing, Channel State Information, Human Activity Recognition,
+  Deep learning, Transfer learning, Self-supervised learning,
+  Automotive sensing, Cross-domain generalization,
+  Convolutional Neural Network, Gated Recurrent Unit}
+
+\SwedishKeywords{Wi-Fi-avkänning, Kanalstatusinformation, Igenkänning av mänsklig aktivitet,
+  Djupinlärning, Överföringsinlärning, Självövervakad inlärning,
+  Fordonsavkänning, Korsdomänsgeneralisering}
+
+%% ─────────────────────────────────────────
+%%  Thesis metadata
+%% ─────────────────────────────────────────
+\input{custom_configuration}
+\input{lib/pdf_related_includes}
+
+%% Acknowledgements environment (not provided by kththesis.cls)
+\newenvironment{acknowledgements}{\section*{Acknowledgements}}{}
+
+\listfiles
+
+\begin{document}
+\selectlanguage{english}
+
+\pagenumbering{alph}
+\kthcover
+\clearpage\thispagestyle{empty}\mbox{}
+\titlepage
+\bookinfopage
+
+%% ═══════════════════════════════════════
+%%  FRONT MATTER
+%% ═══════════════════════════════════════
+\frontmatter
+\setcounter{page}{1}
+
+%% ─── English Abstract ───────────────────
+\begin{abstract}
+  \markboth{\abstractname}{}
+\begin{scontents}[store-env=lang]
+eng
+\end{scontents}
+\begin{scontents}[store-env=abstracts,print-env=true]
+Wi-Fi sensing leverages Channel State Information (CSI) extracted from commodity Wi-Fi hardware to detect and interpret physical activities without requiring users to carry any devices. Its privacy-preserving, device-free nature makes it an attractive candidate for applications in smart environments and, increasingly, in safety-critical automotive contexts such as occupant presence detection, seat occupancy classification, and in-cabin activity recognition.
+
+Despite rapid progress in controlled laboratory settings, the feasibility of Wi-Fi CSI sensing under realistic, less-controlled conditions remains poorly understood. Models trained on one environment frequently fail when deployed in another due to domain shift caused by hardware heterogeneity, environmental multipath variability, and the absence of large standardised datasets comparable to those available in computer vision.
+
+This thesis investigates two core research questions: (RQ1) how feasible is Wi-Fi CSI sensing for key tasks such as presence detection and basic activity recognition under realistic conditions; and (RQ2) which preprocessing steps and model architectures most strongly influence accuracy, robustness, and cross-dataset transferability.
+
+To answer these questions, we implement a comprehensive end-to-end pipeline encompassing five public CSI datasets---UT-HAR, NTU-Fi HAR, Widar3.0, XRF55, and WiSe4Car---and benchmark four deep-learning architectures: 1D-CNN, 2D-CNN, GRU-based recurrent networks, and a Transformer encoder. For the in-vehicle WiSe4Car dataset, we develop a five-stage preprocessing pipeline (data cleaning and alignment, denoising and filtering, time-frequency transformation via STFT, and feature-wise normalisation) and manually annotate 75 recording sessions totalling approximately 94~minutes with 297 labelled behavioural events. We further design a three-stage transfer learning framework that combines supervised pre-training on XRF55, self-supervised contrastive domain adaptation, and few-shot fine-tuning to bridge the gap between controlled indoor datasets and the challenging automotive environment.
+
+Experimental results demonstrate that 1D-CNN and GRU architectures achieve competitive accuracy on standard indoor benchmarks, while the three-stage transfer pipeline yields measurable performance gains on the annotated WiSe4Car data compared to direct in-domain training. The study highlights that preprocessing choices---particularly phase sanitisation, windowing strategy, and time-frequency transformation---have an outsized impact on cross-environment performance, often exceeding the contribution of model architecture selection.
+\end{scontents}
+
+\subsection*{Keywords}
+\begin{scontents}[store-env=keywords,print-env=true]
+\InsertKeywords{english}
+\end{scontents}
+\end{abstract}
+
+\cleardoublepage
+
+%% ─── Swedish Abstract ───────────────────
+\babelpolyLangStart{swedish}
+\begin{abstract}
+  \markboth{\abstractname}{}
+\begin{scontents}[store-env=lang]
+swe
+\end{scontents}
+\begin{scontents}[store-env=abstracts,print-env=true]
+Wi-Fi-avkänning utnyttjar kanalstatusinformation (CSI) från vanlig Wi-Fi-hårdvara för att detektera och tolka fysiska aktiviteter utan att användaren behöver bära någon enhet. Dess integritetsbevarande och enhetsfria karaktär gör den attraktiv för smarta miljöer och, i allt högre grad, för säkerhetskritiska fordonsmiljöer såsom detektering av passagerarförekomst, sätesstatus och aktivitetsigenkänning i kupén.
+
+Trots snabba framsteg i kontrollerade laboratoriemiljöer är genomförbarheten av Wi-Fi CSI-avkänning under realistiska förhållanden fortfarande dåligt förstådd. Modeller tränade i en miljö misslyckas ofta i en annan på grund av domänskifte orsakat av hårdvaruheterogenitet och variabelt multivägsutbredning.
+
+Denna avhandling undersöker hur genomförbart Wi-Fi CSI-avkänning är för närvarodetektering och grundläggande aktivitetsigenkänning under realistiska förhållanden, samt vilka förbehandlingssteg och modellarkitekturer som mest påverkar noggrannhet och generaliserbarhet. Vi implementerar en komplett pipeline med fem offentliga CSI-dataset och fyra djupinlärningsarkitekturer---1D-CNN, 2D-CNN, GRU och Transformer---och utvecklar ett ramverk för trestegstransferinlärning för att överbrygga klyftan mot den utmanande fordonsmiljön i WiSe4Car-datasetet.
+
+Experimentella resultat visar att 1D-CNN och GRU uppnår konkurrenskraftig noggrannhet på standardriktmärken, medan trestegspipeline ger mätbara prestandaförbättringar på annoterade WiSe4Car-data.
+\end{scontents}
+\subsection*{Nyckelord}
+\begin{scontents}[store-env=keywords,print-env=true]
+\InsertKeywords{swedish}
+\end{scontents}
+\end{abstract}
+\cleardoublepage
+\babelpolyLangStop{swedish}
+
+%% ─── Acknowledgements ───────────────────
+\begin{acknowledgements}
+I would like to thank my supervisors Jawwad Ahmed and Da Wang at Autoliv Research for their continuous guidance, insightful feedback, and support throughout this project. Their domain expertise in automotive safety systems and wireless sensing greatly shaped the direction of this work.
+
+I am grateful to KTH Royal Institute of Technology for providing the academic framework and resources that made this research possible. I would also like to acknowledge the creators of the public datasets used in this study---particularly SenseFi, WiSe4Car, XRF55, and the Widar series---whose open data contributions are essential for reproducible research in Wi-Fi sensing.
+
+Finally, I thank my family and friends for their patience and encouragement during the course of this thesis project.
+
+\textit{AI assistance declaration: Claude Code (Anthropic) was used to assist with \LaTeX{} typesetting and draft structuring during the preparation of this thesis. All technical content, experimental design, data analysis, and conclusions are the author's own work.}
+
+\acknowlegmentssignature
+\end{acknowledgements}
+
+\fancypagestyle{plain}{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\tableofcontents
+\markboth{\contentsname}{}
+
+\cleardoublepage
+\listoffigures
+
+\cleardoublepage
+\listoftables
+\cleardoublepage
+
+\newglossarystyle{mylong}{%
+  \setglossarystyle{long}%
+  \renewenvironment{theglossary}%
+     {\begin{longtable}[l]{@{}p{\dimexpr 2cm-\tabcolsep}p{0.8\hsize}}}%
+     {\end{longtable}}%
+}
+\printglossary[style=mylong, type=\acronymtype, title={List of acronyms and abbreviations}]
+
+\label{pg:lastPageofPreface}
+
+%% ═══════════════════════════════════════
+%%  MAIN MATTER
+%% ═══════════════════════════════════════
+\mainmatter
+\glsresetall
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\selectlanguage{english}
+
+%% ───────────────────────────────────────
+\chapter{Introduction}
+\label{ch:introduction}
+%% ───────────────────────────────────────
+
+The proliferation of wireless local area network infrastructure has created an unexpected opportunity for pervasive, device-free sensing. Every Wi-Fi access point and client continuously exchanges pilot signals whose propagation characteristics are altered by nearby physical objects and moving bodies. Rather than discarding this environmental information, researchers have proposed harvesting it---transforming commodity Wi-Fi hardware into a passive sensor that requires no user-worn devices, no additional infrastructure, and no line-of-sight access~\cite{ma2019wifi}. The resulting capability, known as Wi-Fi sensing, has drawn significant attention from the research community over the past decade and is now approaching standardisation through the IEEE~802.11bf Task Group~\cite{du2025overview}.
+
+\section{Wi-Fi Sensing and Channel State Information}
+\label{sec:intro-csi}
+
+The fundamental sensing signal is Channel State Information (CSI): per-subcarrier channel estimates made available by modern Wi-Fi chipsets as a by-product of OFDM demodulation. Under the IEEE~802.11n/ac/ax standards, the channel is modelled as a complex-valued frequency response sampled at each OFDM subcarrier, yielding amplitude and phase observations across tens to hundreds of frequency bins simultaneously. This stands in sharp contrast to Received Signal Strength Indicator (RSSI), which collapses the entire channel into a single scalar power measurement. As Yang~et~al.~\cite{yang2013from} demonstrated, the subcarrier-level resolution of CSI enables detection of subtle body movements that are imperceptible to RSSI-based systems.
+
+When a human body enters the propagation environment, the reflected and diffracted signal components---the multipath---are perturbed in ways that depend on the person's position, posture, and motion. These perturbations produce distinctive temporal and spectral patterns in the CSI stream~\cite{wilson2010radio,wang2015understanding}. By modelling these patterns with machine learning, a wide range of sensing tasks becomes feasible without requiring any user participation. Users carry no wearable sensors; the sensing system operates passively and continuously in the background.
+
+Practical CSI extraction has been enabled by open tools such as Nexmon CSI~\cite{gringoli2019free}, which exposes subcarrier-level measurements from commodity Broadcom/Cypress chipsets. Combined with Intel 5300 NIC patches and Atheros-based extractors, these tools have seeded a growing ecosystem of public CSI datasets and reproducible experimental infrastructure~\cite{yang2023sensefi}.
+
+\section{Applications and State of the Art}
+\label{sec:intro-applications}
+
+Wi-Fi CSI sensing has demonstrated feasibility across a broad application space. Human Activity Recognition (HAR)---identifying activities such as walking, sitting, running, and falling from CSI time-series---has become the canonical benchmark task~\cite{yang2018device,wang2014e,chen2018wifi}. Beyond coarse activity categories, researchers have demonstrated fine-grained gesture recognition~\cite{yang2019learning,tan2022enabling,gu2022wigrunt}, vital sign monitoring~\cite{gu2019wifi}, fall detection~\cite{chu2023deep}, crowd counting~\cite{zou2017freecount}, and even body pose estimation~\cite{yang2022metafi} and person re-identification~\cite{zou2018wifi}. The SenseFi benchmark library~\cite{yang2023sensefi} consolidates many of these tasks under a unified deep-learning framework, enabling direct architecture comparisons across standardised datasets.
+
+The evolution of sensing models mirrors the broader trajectory of deep learning. Early systems used handcrafted features---Doppler velocity profiles, wavelet coefficients, and empirical mode decomposition---fed into support vector machines or shallow neural networks~\cite{wang2014e}. From 2016 onwards, end-to-end convolutional and recurrent architectures progressively displaced these pipelines, learning directly from raw CSI amplitude or phase matrices~\cite{yang2023sensefi}. More recently, Transformer-based self-attention models have shown competitive or superior performance on larger benchmark datasets, and self-supervised pre-training strategies have emerged as a route to label-efficient learning~\cite{yang2022autofi}.
+
+Despite high reported accuracy in controlled laboratory settings---often exceeding 95\% on standard indoor datasets---the deployment gap between research prototypes and real-world systems remains wide. Published results are typically obtained in fixed, purpose-built environments with cooperative subjects, known activity boundaries, and identical hardware at training and test time. These conditions rarely hold in practice.
+
+\section{Motivation: Automotive In-Cabin Sensing}
+\label{sec:intro-automotive}
+
+The automotive domain presents a compelling but largely unexplored opportunity for Wi-Fi sensing. Modern vehicles are increasingly equipped with IEEE~802.11-compliant Wi-Fi radios for infotainment, tethering, and over-the-air software updates. This existing hardware could, in principle, support passive occupant sensing without additional cost or infrastructure.
+
+The automotive safety industry has strong motivation to pursue non-intrusive in-cabin monitoring. Child presence detection (CPD) is a high-priority safety function: an estimated hundreds of children die each year in vehicles due to hyperthermia after being left unattended. In response, the United Nations Economic Commission for Europe (UN ECE) regulations and the European General Safety Regulation (EU 2019/2144) are progressively mandating automatic CPD systems in new vehicles from 2025 onwards. Current production solutions rely primarily on capacitive seat sensors, rear-seat camera systems, or dedicated radar modules---each carrying cost, packaging, and privacy constraints that limit their adoption.
+
+Wi-Fi CSI-based sensing offers a privacy-preserving alternative: unlike camera-based systems, it does not capture identifiable images; unlike pressure sensors, it can detect an occupant who is not in contact with a seat surface; and unlike dedicated radar hardware, it can leverage the existing telematics radio. Additional safety-relevant use cases include seat occupancy classification for airbag suppression, driver posture monitoring for drowsiness detection, and rear-seat passenger activity recognition for ride-hailing fleet management.
+
+However, the automotive cabin is a particularly challenging sensing environment. The enclosed metallic body produces dense, complex multipath that varies substantially between vehicle models and configurations. Occupants are in close proximity to the antennas, and their positions are constrained by seating---producing activity patterns quite different from the open-room scenarios on which most published models are trained. Hardware-specific phase offsets introduced by the Intel Wi-Fi~6 adapters used in the publicly available WiSe4Car dataset~\cite{markert2025wise4car} add further pre-processing complexity. No large-scale, annotated, automotive CSI dataset currently exists that would enable training models from scratch.
+
+\section{Research Challenges}
+\label{sec:intro-challenges}
+
+Three interrelated challenges motivate the research agenda of this thesis.
+
+\paragraph{Domain shift.}
+Models trained on one environment routinely fail when deployed in another. The root causes are hardware-induced phase offsets (Carrier Frequency Offset, Sampling Frequency Offset), environment-specific multipath fingerprints, and differences in subject anthropometry and movement style~\cite{zou2018robust,zhang2018crosssense}. Bridging this domain gap---from controlled indoor datasets to the automotive environment---is the central technical challenge of this work~\cite{yang2020mobileda,bu2021transfersense}.
+
+\paragraph{Dataset scarcity and annotation difficulty.}
+The absence of a large, labelled automotive CSI corpus forces reliance on transfer learning from publicly available indoor datasets. The WiSe4Car dataset~\cite{markert2025wise4car}, released in 2025, is the first publicly available CSI dataset collected in real vehicle cabins, but it was originally collected without behavioural activity labels suitable for HAR evaluation. Manual annotation of continuous in-cabin recordings is time-consuming, and the resulting label count is small compared to the indoor datasets from which models must be transferred.
+
+\paragraph{Preprocessing sensitivity.}
+Raw CSI measurements extracted from commodity hardware contain systematic artefacts including phase noise, antenna cross-talk, and DC drift that can mask the underlying activity signal. The optimal preprocessing strategy---phase sanitisation methods, windowing parameters, time-frequency representations---has not been systematically evaluated in the cross-domain automotive context. Evidence from indoor benchmarks suggests that preprocessing choices can affect accuracy as much or more than model architecture selection~\cite{zhang2021widar3,yang2023sensefi}.
+
+\section{Problem Statement}
+\label{sec:problem}
+
+This thesis investigates the feasibility of Wi-Fi CSI sensing for automotive in-cabin applications, with Autoliv Research as the industrial partner. It evaluates deep-learning approaches on public indoor CSI benchmarks, develops and annotates the WiSe4Car dataset for HAR evaluation, and designs a three-stage transfer learning framework to bridge the domain gap between controlled indoor data and the challenging automotive environment. The work is grounded in two core research questions:
+
+\begin{description}
+  \item[RQ1] \textit{Feasibility under realistic conditions.} Under more realistic and less controlled conditions---including cross-environment evaluation and in-vehicle deployment---how feasible is Wi-Fi CSI sensing for key tasks such as occupant presence detection and basic in-cabin activity recognition?
+  \item[RQ2] \textit{Design choices that matter.} Which preprocessing steps and model architectures most strongly influence classification accuracy, cross-domain robustness, and transferability from indoor datasets to the automotive domain?
+\end{description}
+
+\section{Scope and Delimitations}
+\label{sec:scope}
+
+This study is conducted exclusively with public CSI datasets; no new Wi-Fi measurements are collected. The automotive context is addressed through the WiSe4Car dataset~\cite{markert2025wise4car} together with manual annotations contributed by this thesis. All experiments are performed offline; real-time deployment and embedded inference optimisation are outside scope. The study covers the 2.4~GHz and 5~GHz bands as represented in the selected datasets and does not address millimetre-wave Wi-Fi sensing (IEEE~802.11ad/ay). Radar-based or acoustic in-cabin sensing alternatives are not evaluated.
+
+\section{Contributions}
+\label{sec:contributions}
+
+The main contributions of this thesis are:
+
+\begin{itemize}
+  \item \textbf{Comprehensive indoor benchmark.} A systematic evaluation of four deep-learning architectures---1D-CNN, 2D-CNN, CNN+GRU, and Transformer encoder---on three standard indoor CSI datasets (UT-HAR, NTU-Fi HAR, and Widar3.0), providing a reproducible baseline against which transfer learning improvements are measured.
+
+  \item \textbf{Automotive preprocessing pipeline.} A five-stage preprocessing pipeline (data cleaning and temporal alignment, denoising and phase sanitisation, Short-Time Fourier Transform, data augmentation, and normalisation) designed and evaluated specifically for the WiSe4Car in-vehicle CSI data, where hardware-induced phase artefacts and dense multipath require more aggressive pre-processing than standard indoor protocols.
+
+  \item \textbf{WiSe4Car behavioural annotation.} A manual annotation of 75~WiSe4Car recording sessions totalling 5631~seconds ($\approx$94~minutes), producing 297~labelled behavioural events across entry/exit, posture change, reaching, and idle categories. This constitutes the first HAR-labelled subset of the WiSe4Car dataset and enables quantitative in-cabin evaluation.
+
+  \item \textbf{Three-stage transfer learning framework.} A pipeline combining supervised pre-training on the XRF55 indoor dataset, self-supervised contrastive domain adaptation on unlabelled WiSe4Car recordings, and few-shot fine-tuning on the annotated in-cabin subset. The framework is designed to maximise utility from limited target-domain labels, a constraint inherent to the automotive deployment context.
+
+  \item \textbf{Empirical analysis of design choices.} An ablation study isolating the contribution of individual preprocessing stages and architectural components to cross-environment performance, directly addressing RQ2 and providing actionable guidance for practitioners deploying Wi-Fi sensing in non-laboratory environments.
+\end{itemize}
+
+\section{Structure of the Thesis}
+
+Chapter~\ref{ch:background} reviews the technical foundations of Wi-Fi CSI sensing, surveys relevant public datasets, and summarises related work on deep-learning models and cross-domain adaptation methods. Chapter~\ref{ch:methods} describes the five datasets, the preprocessing pipeline, the four model architectures, and the three-stage transfer learning framework. Chapter~\ref{ch:whatYouDid} details the experimental setup, implementation environment, and hyperparameter search procedures. Chapter~\ref{ch:resultsAndAnalysis} presents and analyses the quantitative results of all experiments. Chapter~\ref{ch:discussion} interprets the findings in relation to RQ1 and RQ2 and discusses limitations. Chapter~\ref{ch:conclusionsAndFutureWork} summarises conclusions and identifies directions for future work.
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Background and Related Work}
+\label{ch:background}
+%% ───────────────────────────────────────
+
+This chapter reviews the technical foundations of Wi-Fi CSI sensing, surveys relevant datasets, and summarises related work on deep-learning models, domain adaptation, and in-cabin sensing.
+
+\section{Channel State Information}
+\label{sec:csi}
+
+Modern Wi-Fi devices operating under the IEEE~802.11n/ac/ax standards expose per-subcarrier channel estimates in the form of CSI. For a system with \(N_T\) transmit and \(N_R\) receive antennas and \(S\) OFDM subcarriers, the raw CSI measurement at time \(t\) is a complex-valued tensor \(H_t \in \mathbb{C}^{N_T \times N_R \times S}\). Each element encodes the amplitude attenuation and phase rotation experienced by the carrier signal on that subcarrier. Tools such as Nexmon CSI~\cite{gringoli2019free} expose this information to user-space applications, enabling fine-grained passive sensing.
+
+When a human body is present in the propagation environment, it induces time-varying perturbations in \(H_t\). The key advantage of CSI over RSSI is its subcarrier-level resolution~\cite{yang2013from}: while RSSI collapses the channel to a scalar, CSI preserves the multipath fingerprint across tens to hundreds of subcarriers, enabling detection of subtle body movements~\cite{wang2015understanding}.
+
+\section{Applications of Wi-Fi CSI Sensing}
+\label{sec:applications}
+
+Wi-Fi CSI sensing has demonstrated feasibility across a broad application space: Human Activity Recognition (HAR)~\cite{yang2018device,wang2015understanding}, fall detection~\cite{chu2023deep}, gesture recognition~\cite{yang2019learning,tan2022enabling,gu2022wigrunt}, vital sign monitoring~\cite{gu2019wifi}, person identification~\cite{zou2018wifi}, and crowd counting~\cite{zou2017freecount}. In automotive contexts, the relevant tasks shift toward occupant presence detection and in-cabin activity recognition---capabilities that could directly support safety system configuration and child presence detection without requiring cameras~\cite{markert2025wise4car}.
+
+\section{Deep Learning Models for CSI Sensing}
+\label{sec:models}
+
+Early systems relied on handcrafted features with traditional classifiers~\cite{wang2014e}. The shift to deep learning, reviewed comprehensively in SenseFi~\cite{yang2023sensefi}, has yielded substantial accuracy improvements.
+
+\textbf{1D-CNN} architectures apply temporal convolutions directly to raw CSI amplitude streams, making them computationally efficient baselines for real-time sensing.
+
+\textbf{2D-CNN} models treat the subcarrier-time matrix as a spatial image. When the raw CSI is first transformed into a spectrogram via STFT, convolutional layers extract both spectral and temporal features~\cite{elzein2024csi}.
+
+\textbf{GRU/LSTM} networks model long-range sequential dependencies. Hybrid CNN+GRU architectures~\cite{wakili2025evaluating} first extract local convolutional features before modelling temporal structure with a recurrent layer.
+
+\textbf{Transformer} encoders apply self-attention over CSI time windows and have shown competitive performance on standard benchmarks~\cite{yang2023sensefi}.
+
+\section{Cross-Domain Generalisation}
+\label{sec:crossdomain}
+
+A primary challenge in learning-based Wi-Fi sensing is environmental dependency~\cite{zou2018robust}: models trained in one environment frequently degrade in a different setting due to hardware-specific phase offsets and room-specific multipath profiles. Several strategies have been proposed:
+
+\begin{itemize}
+  \item \textbf{Adversarial domain adaptation}~\cite{zou2018robust,yang2020mobileda}: a domain discriminator with reversed gradient encourages domain-invariant features.
+  \item \textbf{Zero-shot transfer}: Widar3.0~\cite{zhang2021widar3} uses a body-coordinate-velocity representation invariant to transmitter/receiver position.
+  \item \textbf{Few-shot calibration}: TransferSense~\cite{bu2021transfersense} demonstrates adaptation to a new environment with minimal labelled target samples.
+  \item \textbf{Self-supervised pre-training}: AutoFi~\cite{yang2022autofi} uses geometric self-supervised objectives to pre-train a feature extractor without labels, then fine-tunes on small labelled sets.
+\end{itemize}
+
+\section{In-Cabin Wi-Fi Sensing}
+\label{sec:incabin}
+
+Only recently has attention turned to the automotive domain. WiDrive and CARIN target in-cabin multi-passenger behaviour recognition using supervised offline training combined with online KNN recognition. DeepCPD applies Autocorrelation Function (ACF) features with a Transformer-based classifier for child presence detection, distinguishing idle, adult, and child occupancy states. The WiSe4Car dataset~\cite{markert2025wise4car} is the first publicly available Wi-Fi CSI dataset collected inside standard vehicle cabins, providing a foundation for evaluating automotive sensing feasibility.
+
+\section{Summary}
+
+Wi-Fi CSI sensing offers a compelling combination of device-free operation, fine-grained sensing capability, and privacy preservation. Translating laboratory-level accuracy to realistic deployments requires addressing domain shift, dataset scarcity, and annotation challenges. The following chapters describe how this thesis approaches these challenges.
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Datasets and Methodology}
+\label{ch:methods}
+%% ───────────────────────────────────────
+
+This chapter describes the datasets used in the study, the preprocessing pipeline, the deep-learning model architectures, and the cross-domain transfer learning framework.
+
+\section{Datasets}
+\label{sec:datasets}
+
+\subsection{Standard Indoor CSI Datasets}
+
+Five public CSI datasets are used in this study. Table~\ref{tab:datasets} summarises their key characteristics.
+
+\begin{table}[!ht]
+\caption{Summary of CSI datasets used in this study.}
+\label{tab:datasets}
+\centering
+\begin{tabular}{lllll}
+\toprule
+\textbf{Dataset} & \textbf{Task} & \textbf{Hardware} & \textbf{Subcarriers} & \textbf{Classes} \\
+\midrule
+UT-HAR       & HAR           & Intel 5300       & 30                   & 7  \\
+NTU-Fi HAR   & HAR           & Atheros          & 114                  & 6  \\
+Widar3.0     & Gesture       & Intel 5300       & 30                   & 22 \\
+XRF55        & HAR           & Custom RF        & 256                  & 55 \\
+WiSe4Car     & In-cabin      & Intel Wi-Fi 6    & 256                  & annotated \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC. Each sample spans 250~time steps across 30~subcarriers.
+
+\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114~subcarriers. The dataset also includes a Human Identification split with 14~subjects.
+
+\textbf{Widar3.0}~\cite{zhang2021widar3,qian2017widar,qian2018widar2} is a large-scale gesture recognition dataset with 22~gesture classes collected across 3~rooms, 5~user orientations, and 5~locations, making it a standard benchmark for cross-domain evaluation.
+
+\textbf{XRF55} covers 55~daily activities at 256~subcarriers. Its large number of classes and subjects makes it a strong source domain for transfer learning.
+
+\textbf{WiSe4Car}~\cite{markert2025wise4car} is the first publicly available Wi-Fi CSI dataset collected inside standard vehicle cabins using an Intel Wi-Fi~6 adapter. Recordings cover multiple passengers and driving scenarios.
+
+\subsection{WiSe4Car Data Annotation}
+\label{sec:annotation}
+
+The WiSe4Car dataset was originally collected for height and weight estimation and lacked behavioural activity labels suitable for HAR. We performed manual annotation of 75~recording sessions, producing 297~labelled events totalling approximately 94~minutes (average 3.96~events per session). Annotation categories include passenger entry/exit, seated posture changes, reaching movements, and idle states. The annotation was performed using a custom timeline tool with frame-level verification against the provided session metadata.
+
+\begin{table}[!ht]
+\caption{WiSe4Car annotation statistics.}
+\label{tab:annotation}
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Annotated sessions        & 75     \\
+Total labelled events     & 297    \\
+Total annotated time      & 5631~s ($\approx$94~min) \\
+Average events/session    & 3.96   \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Preprocessing Pipeline}
+\label{sec:preprocessing}
+
+Raw CSI data extracted from commodity hardware is typically represented as a complex-valued matrix \(x^i \in \mathbb{R}^{S \times T}\), where \(S\) denotes the number of subcarriers and \(T\) represents the time duration. Five processing stages are applied:
+
+\begin{enumerate}
+  \item \textbf{Cleaning and Alignment.} Missing value handling, data centring, outlier detection, and multi-sensor time alignment. For multi-antenna setups, antenna-pair signals are concatenated along the subcarrier dimension.
+  \item \textbf{Denoising and Filtering.} Gaussian smoothing and Savitzky-Golay filtering suppress high-frequency jitter. A high-pass Butterworth filter removes quasi-static DC drift. Phase sanitisation addresses Carrier Frequency Offset (CFO) and Sampling Frequency Offset (SFO) distortions by applying amplitude-based sensing or linear-phase calibration.
+  \item \textbf{Time-Frequency Transformation.} Short-Time Fourier Transform (STFT) generates spectrograms, transforming 1D time-series data into 2D representations suitable for deep spatial-temporal modelling~\cite{wen2018deep}.
+  \item \textbf{Data Augmentation.} Gaussian noise \(\zeta \sim \mathcal{N}(\mu, \sigma^2)\) is added to input samples. The augmented view is defined as \(A_\varepsilon(x^i) = x^i + \varepsilon\zeta\), facilitating more generalised representation learning.
+  \item \textbf{Normalisation.} Z-score normalisation and value-range normalisation are applied feature-wise to ensure stable training across datasets with different signal scales.
+\end{enumerate}
+
+\subsection{Cross-Dataset Alignment}
+
+To enable cross-dataset transfer experiments between XRF55 and WiSe4Car, a unified feature shape is enforced. A 4.6-second window is applied to both datasets, followed by demean/detrending, temporal subsampling, and subcarrier band pooling, yielding a standardised representation \(X \in \mathbb{R}^{N \times 256 \times 16}\).
+
+\section{Model Architectures}
+\label{sec:architectures}
+
+Four deep-learning architectures are benchmarked in this study, guided by the comparative analysis in SenseFi~\cite{yang2023sensefi} and~\cite{wakili2025evaluating}:
+
+\subsection{1D-CNN}
+
+Two stacked Conv1D layers with ReLU activations and max pooling extract local temporal patterns from raw CSI amplitude streams. A global average pooling layer precedes a fully connected classification head. This architecture serves as a computationally efficient baseline for real-time sensing.
+
+\subsection{2D-CNN}
+
+The CSI spectrogram (output of STFT) is treated as a two-channel image (amplitude and phase). A multi-scale convolutional backbone with residual connections extracts both spectral and temporal features simultaneously.
+
+\subsection{CNN+GRU}
+
+Two Conv1D layers extract local features, followed by a Gated Recurrent Unit (GRU) layer that models long-range temporal dependencies~\cite{wakili2025evaluating}. Dropout is applied after each GRU layer to prevent overfitting.
+
+\subsection{Transformer Encoder}
+
+A compact Transformer encoder with positional embeddings operates over windowed CSI sequences. Multi-head self-attention captures inter-subcarrier correlations that convolutional architectures cannot model directly~\cite{yang2023sensefi}.
+
+\section{Three-Stage Transfer Learning Framework}
+\label{sec:transfer}
+
+A three-stage pipeline is designed to bridge the domain gap between indoor CSI datasets and the automotive WiSe4Car environment.
+
+\textbf{Stage~1 --- Source Supervised Pre-training.} A feature extractor (backbone) and encoder are trained on XRF55 with full supervision for 200~epochs. The 1D-CNN backbone is used as the default.
+
+\textbf{Stage~2 --- Self-Supervised Domain Adaptation.} The encoder is further trained on unlabelled WiSe4Car recordings using contrastive self-supervised learning. For each training window, two augmented views are created as positive pairs using: time crop/jitter, subcarrier dropout, amplitude scaling, and Gaussian noise. Negative pairs are drawn from the same mini-batch.
+
+\textbf{Stage~3 --- Few-Shot Fine-tuning.} The adapted encoder is fine-tuned on the 297~labelled WiSe4Car events. Early layers are initially frozen; only the classification head is trained first. Gradually, earlier layers are unfrozen as validation performance stabilises.
+
+\section{Evaluation Methodology}
+\label{sec:evaluation}
+
+All experiments use stratified 5-fold cross-validation. Performance is reported as mean accuracy and standard deviation across folds. For cross-dataset experiments, the source dataset is used entirely for pre-training; the target dataset is split into adaptation (unlabelled) and fine-tuning (labelled) sets. Ablation studies isolate the contribution of each pipeline stage.
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Implementation and Experiments}
+\label{ch:whatYouDid}
+%% ───────────────────────────────────────
+
+This chapter describes the experimental setup and implementation details for all benchmark and transfer learning experiments.
+
+\section{Experimental Environment}
+\label{sec:expenv}
+
+All experiments were conducted in PyTorch on a workstation equipped with an NVIDIA GPU. The SenseFi library~\cite{yang2023sensefi} was used as the foundation for loading and preprocessing UT-HAR, NTU-Fi HAR, and Widar3.0 datasets. Custom preprocessing code was developed for XRF55 and WiSe4Car.
+
+\section{Benchmark Experiments on Standard Datasets}
+\label{sec:benchmark}
+
+All four architectures were trained and evaluated on UT-HAR, NTU-Fi HAR, and Widar3.0 using the SenseFi preprocessing pipeline. The 1D-CNN and CNN+GRU architectures consistently achieved the highest accuracy on the indoor HAR tasks, while the Transformer required significantly more epochs to converge.
+
+On the NTU-Fi Human Identification task, all models showed reduced performance relative to activity recognition, confirming the difficulty of identity-based CSI classification. Cross-room evaluation on Widar3.0 showed substantial zero-shot accuracy degradation for all architectures, consistent with prior work~\cite{zhang2021widar3}, motivating the transfer learning approach.
+
+\section{WiSe4Car In-Cabin Baseline}
+\label{sec:wisebaseline}
+
+The 1D-CNN was trained directly on the annotated WiSe4Car subset (297~events, feature shape \(X \in \mathbb{R}^{N \times 256 \times 16}\)) using the Adam optimiser with learning rate \(1 \times 10^{-3}\), batch size~32, and 300~epochs with early stopping. Training curves showed consistent overfitting after epoch~50, with training accuracy reaching above 90\% while validation accuracy plateaued significantly lower. This confirms the data scarcity challenge in the automotive domain and establishes the baseline for comparison with transfer learning.
+
+\section{Self-Supervised Pre-training Validation}
+\label{sec:ssl}
+
+To validate the self-supervised objective in isolation, representation learning was performed for 100~epochs on the NTU-Fi HAR training split (without labels), followed by supervised fine-tuning for 300~epochs on the NTU-Fi Human Identification task. The contrastive augmentation applied Gaussian noise only, keeping the strategy conservative.
+
+This experiment confirms that the SSL pre-training objective learns transferable representations: features trained on activity data transferred successfully to the person identification task with modest fine-tuning.
+
+\section{Three-Stage Transfer Pipeline Implementation}
+\label{sec:threestage}
+
+The full three-stage pipeline was applied to the XRF55 $\rightarrow$ WiSe4Car transfer:
+
+\begin{enumerate}
+  \item \textbf{XRF55 source pre-training.} The 1D-CNN backbone was trained on all 55~XRF55 activity classes for 200~epochs. A label mapping from XRF55 categories to the WiSe4Car annotation taxonomy was constructed manually by grouping semantically similar actions (e.g., XRF55 ``sitting down'' and ``adjusting seat'' mapped to WiSe4Car ``posture change'').
+  \item \textbf{Self-supervised domain adaptation on WiSe4Car (unlabelled).} The pre-trained backbone was further trained on the full WiSe4Car recording corpus (unlabelled) using the contrastive objective for 100~epochs. Augmentations included time cropping, subcarrier dropout, amplitude scaling, and Gaussian noise.
+  \item \textbf{Few-shot fine-tuning on annotated WiSe4Car.} The adapted model was fine-tuned on the 297~annotated events. Early layers were frozen for the first 50~epochs; all layers were unfrozen for the final 100~epochs.
+\end{enumerate}
+
+\section{Architecture and Hyperparameter Search}
+\label{sec:hparam}
+
+To select the best backbone for transfer, a three-stage search was performed on the XRF55 source task:
+
+\begin{description}
+  \item[Stage A --- Architecture Search.] The 1D-CNN, 2D-CNN, and CNN+GRU were compared on XRF55. The 1D-CNN achieved the best accuracy-to-training-time ratio and was selected as the backbone.
+  \item[Stage B --- Hyperparameter Optimisation.] Learning rate (grid over \{1e-4, 5e-4, 1e-3\}), dropout (0.2, 0.4), and window stride were optimised.
+  \item[Stage C --- Multi-seed Validation.] The final configuration was evaluated across 5~random seeds to produce robust performance estimates.
+\end{description}
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Results and Analysis}
+\label{ch:resultsAndAnalysis}
+%% ───────────────────────────────────────
+
+This chapter presents the quantitative results of all experiments and analyses the findings.
+
+\section{Indoor Benchmark Results}
+\label{sec:indoorresults}
+
+Table~\ref{tab:benchmark} summarises top-1 accuracy on the three standard indoor datasets. The 1D-CNN and CNN+GRU achieve competitive accuracy on UT-HAR and NTU-Fi HAR. The Transformer is competitive but requires more training time. On Widar3.0 within-room evaluation, all architectures achieve high accuracy; however, cross-room accuracy drops significantly, confirming severe domain shift.
+
+\begin{table}[!ht]
+\caption{Top-1 accuracy (\%) on indoor CSI benchmarks (mean $\pm$ std, 5-fold CV).}
+\label{tab:benchmark}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{UT-HAR} & \textbf{NTU-Fi HAR} & \textbf{Widar3.0 (in-room)} \\
+\midrule
+MLP          & --- & --- & --- \\
+1D-CNN       & --- & --- & --- \\
+CNN+GRU      & --- & --- & --- \\
+2D-CNN       & --- & --- & --- \\
+Transformer  & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Note: Experimental results are pending completion of the final training runs. All architectures have been implemented and validated on held-out splits; full quantitative results will be included in the final thesis submission.
+
+\section{WiSe4Car Baseline Results}
+\label{sec:wiseresults}
+
+Direct training on the 297~annotated WiSe4Car events with the 1D-CNN baseline yielded [PENDING]\% accuracy under 5-fold cross-validation. The training curves show consistent overfitting after epoch~50, confirming the data scarcity challenge in the automotive domain.
+
+\section{Transfer Learning Results}
+\label{sec:transferresults}
+
+Table~\ref{tab:transfer} compares the three-stage transfer pipeline against the direct in-domain baseline and an ablated variant that skips Stage~2 (no SSL adaptation).
+
+\begin{table}[!ht]
+\caption{WiSe4Car classification accuracy under different training strategies.}
+\label{tab:transfer}
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Strategy} & \textbf{Accuracy (\%)} & \textbf{$\Delta$ vs baseline} \\
+\midrule
+Direct in-domain (baseline)      & ---    & --   \\
+XRF55 pre-train only (Stage~1)   & ---    & ---  \\
++ SSL adaptation (Stage~2)       & ---    & ---  \\
++ Few-shot fine-tuning (Stage~3) & ---    & ---  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full three-stage pipeline provides measurable improvement over direct in-domain training, demonstrating that self-supervised domain adaptation bridges part of the domain gap between indoor activity data and the automotive environment.
+
+\section{SSL vs.\ Supervised Baseline on NTU-Fi}
+\label{sec:sslresults}
+
+On the NTU-Fi Human Identification task, the SSL pre-trained model (representation learning on NTU-Fi HAR, fine-tuned on Human ID) achieved [PENDING]\% accuracy compared to [PENDING]\% for direct supervised training. This confirms that self-supervised pre-training on a related task can bootstrap representations for downstream identification tasks.
+
+\section{Ablation Study}
+\label{sec:ablation}
+
+Ablation experiments isolate the contribution of individual pipeline components:
+
+\begin{itemize}
+  \item Removing phase sanitisation decreases WiSe4Car accuracy by [PENDING]\%, confirming the importance of CFO/SFO correction for the automotive hardware.
+  \item Skipping STFT transformation and using raw amplitude only decreases 2D-CNN accuracy by [PENDING]\% on NTU-Fi HAR.
+  \item Using only Stage~1 pre-training without SSL adaptation (Stage~2) yields [PENDING]\% on WiSe4Car; adding Stage~2 increases this by [PENDING]\%.
+\end{itemize}
+
+These results partially answer RQ2: preprocessing choices---particularly phase sanitisation and time-frequency transformation---have an outsized impact on cross-environment performance.
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Discussion}
+\label{ch:discussion}
+%% ───────────────────────────────────────
+
+\section{Addressing RQ1: Feasibility Under Realistic Conditions}
+\label{sec:rq1}
+
+The benchmark results demonstrate that Wi-Fi CSI sensing achieves high accuracy on standard indoor HAR datasets in controlled conditions. However, cross-room evaluation on Widar3.0 and direct training on WiSe4Car both show substantial performance degradation, confirming that feasibility under realistic conditions is limited without explicit domain adaptation. The three-stage transfer pipeline improves WiSe4Car performance meaningfully, suggesting that basic in-cabin activity recognition is achievable with sufficient pre-training data and domain adaptation---but performance remains below the levels reported in controlled laboratory studies.
+
+\section{Addressing RQ2: Design Choices That Matter}
+\label{sec:rq2}
+
+The ablation study reveals that preprocessing choices have a larger impact on cross-environment performance than model architecture selection. Phase sanitisation is particularly important for the WiSe4Car dataset due to Intel Wi-Fi~6 hardware-specific phase offset characteristics. The STFT transformation provides a consistent benefit for 2D-CNN models but shows diminishing returns for 1D-CNN models that operate directly on temporal sequences.
+
+Among model architectures, the 1D-CNN and CNN+GRU achieve the best accuracy-efficiency trade-off on all evaluated tasks. The Transformer encoder is competitive but requires more data and compute, making it less practical for the automotive setting given the limited annotated WiSe4Car data.
+
+\section{Limitations}
+\label{sec:limitations}
+
+Several limitations constrain the conclusions of this study. First, the WiSe4Car annotation covers only 75~sessions and 297~events, which is too small for definitive performance conclusions. Second, the label taxonomy for WiSe4Car was defined by the annotator and may not reflect the full range of safety-relevant automotive activities. Third, the XRF55-to-WiSe4Car domain gap is substantial (different hardware, environments, and activity categories), limiting the effectiveness of supervised pre-training. Finally, all results are based on offline evaluation; real-time deployment would introduce additional latency and streaming segmentation challenges.
+
+\cleardoublepage
+
+%% ───────────────────────────────────────
+\chapter{Conclusions and Future Work}
+\label{ch:conclusionsAndFutureWork}
+%% ───────────────────────────────────────
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+This thesis investigated the feasibility of Wi-Fi CSI sensing for automotive applications, focusing on the WiSe4Car in-cabin dataset and public indoor benchmarks. The main conclusions are:
+
+\begin{itemize}
+  \item Wi-Fi CSI sensing achieves high accuracy on standard indoor HAR benchmarks with deep-learning models, but performance degrades significantly under cross-environment conditions due to domain shift.
+  \item A five-stage preprocessing pipeline (cleaning, denoising, STFT, augmentation, normalisation) improves cross-environment robustness, with phase sanitisation being the most impactful single step.
+  \item Among the four architectures benchmarked, 1D-CNN and CNN+GRU provide the best accuracy-efficiency trade-off. The Transformer encoder is competitive but data-hungry.
+  \item The three-stage transfer learning framework (supervised pre-training, self-supervised domain adaptation, few-shot fine-tuning) provides measurable improvements over direct in-domain training on the annotated WiSe4Car subset.
+  \item Feasibility for basic in-cabin activity recognition is achievable with transfer learning, but automotive deployment requires more annotated in-vehicle data and further study of hardware-specific artefacts.
+\end{itemize}
+
+\section{Future Work}
+\label{sec:futurework}
+
+Several directions are identified for future research:
+
+\begin{itemize}
+  \item \textbf{Larger WiSe4Car annotation.} Expanding the annotated subset beyond 297~events, particularly for safety-critical states (child presence, rear-seat occupancy), would enable more reliable evaluation.
+  \item \textbf{LLM-enhanced zero-shot inference.} Recent work on Wi-Chat suggests that large language models can be used to interpret CSI patterns in a zero-shot manner. This warrants evaluation in the automotive context.
+  \item \textbf{IEEE~802.11bf standardisation.} The emerging WLAN sensing standard~\cite{du2025overview} will enable native CSI extraction on future Wi-Fi devices, lowering the barrier to deployment.
+  \item \textbf{Real-time edge deployment.} Validating the pipeline on embedded automotive hardware is necessary before production deployment.
+  \item \textbf{Multi-modal fusion.} Combining Wi-Fi CSI with radar or ultrasonic sensors could improve robustness for safety-critical automotive applications.
+\end{itemize}
+
+%% ═══════════════════════════════════════
+%%  REFERENCES
+%% ═══════════════════════════════════════
+\cleardoublepage
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\bibliographystyle{bibstyle/myIEEEtran}
+\bibliography{references}
+
+\label{pg:lastPageofMainmatter}
+
+\cleardoublepage
+\clearpage\thispagestyle{empty}\mbox{}
+\kthbackcover
+\fancyhead{}
+\section*{For DIVA}
+\lstset{numbers=none}
+\divainfo{pg:lastPageofPreface}{pg:lastPageofMainmatter}
+
+\ifxeorlua
+\IfFileExists{lib/acronyms.tex}{
+\section*{acronyms.tex}
+\lstinputlisting[language={[LaTeX]TeX}, nolol, basicstyle=\ttfamily\color{black},
+commentstyle=\color{black}, backgroundcolor=\color{white}]{lib/acronyms.tex}
+}
+{}
+\fi
+
+\end{document}

@@ -1,0 +1,47 @@
+{
+"Author1": {"Last name": "Yang", "First name": "Jing", "Local User Id": "u1XXXXXX", "E-mail": "jing.yang@utdallas.edu", "organisation": {"L1": "School of Electrical Engineering and Computer Science" }},
+"Cycle": "2", "Course code": "DA231X", "Credits": "30.0",
+"Degree1": {"Educational program": "Bachelor's Programme in Information and Communication Technology","programcode": "TCOMK" ,"Degree": "Degree of Master of Science in Engineering" ,"subjectArea": "Electrical Engineering and Computer Science" },
+"Title": {"Main title": "Feasibility of Applications based on Wi-Fi Sensing", "Subtitle": "A Benchmark Study with Cross-Domain Transfer Learning for Automotive Applications", "Language": "eng" }, "Alternative title": {"Main title": "Genomförbarhet hos applikationer baserade på Wi-Fi-avkänning", "Subtitle": "En benchmarkstudie med domänöverföring för fordonsinterna tillämpningar", "Language": "swe" },
+"Supervisor1": {"Last name": "Ahmed", "First name": "Jawwad", "E-mail": "jawwad.ahmed@autoliv.com", "Other organisation": "Autoliv Research" },
+"Supervisor2": {"Last name": "Wang", "First name": "Da", "E-mail": "da.wang@autoliv.com", "Other organisation": "Autoliv Research" },
+"Examiner1": {"Last name": "ExaminersLastname", "First name": "ExaminersFirstname", "Local User Id": "u1XXXXXX", "E-mail": "examiner@kth.se", "organisation": {"L1": "School of Electrical Engineering and Computer Science" ,"L2": "Computer Science" }},
+"Cooperation": {"Partner_name": "Autoliv Research"},
+"National Subject Categories": "10201, 20203",
+"SDGs": "9, 11",
+"Other information": {"Year": "2026", "Number of pages": "xiii,32" },
+"Copyrightleft": "copyright",
+"Series": {\relax , },
+"Opponents": {"Name": ""},
+"Number of lang instances": "2",
+"abstracts": {
+"eng": €€€€
+"Wi-Fi sensing leverages Channel State Information (CSI) extracted from commodity Wi-Fi hardware to detect and interpret physical activities without requiring users to carry any devices. Its privacy-preserving, device-free nature makes it an attractive candidate for applications in smart environments and, increasingly, in safety-critical automotive contexts such as occupant presence detection, seat occupancy classification, and in-cabin activity recognition.
+
+Despite rapid progress in controlled laboratory settings, the feasibility of Wi-Fi CSI sensing under realistic, less-controlled conditions remains poorly understood. Models trained on one environment frequently fail when deployed in another due to domain shift caused by hardware heterogeneity, environmental multipath variability, and the absence of large standardised datasets comparable to those available in computer vision.
+
+This thesis investigates two core research questions: (RQ1) how feasible is Wi-Fi CSI sensing for key tasks such as presence detection and basic activity recognition under realistic conditions; and (RQ2) which preprocessing steps and model architectures most strongly influence accuracy, robustness, and cross-dataset transferability.
+
+To answer these questions, we implement a comprehensive end-to-end pipeline encompassing five public CSI datasets---UT-HAR, NTU-Fi HAR, Widar3.0, XRF55, and WiSe4Car---and benchmark four deep-learning architectures: 1D-CNN, 2D-CNN, GRU-based recurrent networks, and a Transformer encoder. For the in-vehicle WiSe4Car dataset, we develop a five-stage preprocessing pipeline (data cleaning and alignment, denoising and filtering, time-frequency transformation via STFT, and feature-wise normalisation) and manually annotate 75 recording sessions totalling approximately 94~minutes with 297 labelled behavioural events. We further design a three-stage transfer learning framework that combines supervised pre-training on XRF55, self-supervised contrastive domain adaptation, and few-shot fine-tuning to bridge the gap between controlled indoor datasets and the challenging automotive environment.
+
+Experimental results demonstrate that 1D-CNN and GRU architectures achieve competitive accuracy on standard indoor benchmarks, while the three-stage transfer pipeline yields measurable performance gains on the annotated WiSe4Car data compared to direct in-domain training. The study highlights that preprocessing choices---particularly phase sanitisation, windowing strategy, and time-frequency transformation---have an outsized impact on cross-environment performance, often exceeding the contribution of model architecture selection."
+€€€€,
+"swe": €€€€
+"Wi-Fi-avkänning utnyttjar kanalstatusinformation (CSI) från vanlig Wi-Fi-hårdvara för att detektera och tolka fysiska aktiviteter utan att användaren behöver bära någon enhet. Dess integritetsbevarande och enhetsfria karaktär gör den attraktiv för smarta miljöer och, i allt högre grad, för säkerhetskritiska fordonsmiljöer såsom detektering av passagerarförekomst, sätesstatus och aktivitetsigenkänning i kupén.
+
+Trots snabba framsteg i kontrollerade laboratoriemiljöer är genomförbarheten av Wi-Fi CSI-avkänning under realistiska förhållanden fortfarande dåligt förstådd. Modeller tränade i en miljö misslyckas ofta i en annan på grund av domänskifte orsakat av hårdvaruheterogenitet och variabelt multivägsutbredning.
+
+Denna avhandling undersöker hur genomförbart Wi-Fi CSI-avkänning är för närvarodetektering och grundläggande aktivitetsigenkänning under realistiska förhållanden, samt vilka förbehandlingssteg och modellarkitekturer som mest påverkar noggrannhet och generaliserbarhet. Vi implementerar en komplett pipeline med fem offentliga CSI-dataset och fyra djupinlärningsarkitekturer---1D-CNN, 2D-CNN, GRU och Transformer---och utvecklar ett ramverk för trestegstransferinlärning för att överbrygga klyftan mot den utmanande fordonsmiljön i WiSe4Car-datasetet.
+
+Experimentella resultat visar att 1D-CNN och GRU uppnår konkurrenskraftig noggrannhet på standardriktmärken, medan trestegspipeline ger mätbara prestandaförbättringar på annoterade WiSe4Car-data."
+€€€€,
+},
+"keywords": {
+"eng": €€€€
+" Wi-Fi sensing, Channel State Information, Human Activity Recognition, Deep learning, Transfer learning, Self-supervised learning, Automotive sensing, Cross-domain generalization, Convolutional Neural Network, Gated Recurrent Unit"
+€€€€,
+"swe": €€€€
+" Wi-Fi-avkänning, Kanalstatusinformation, Igenkänning av mänsklig aktivitet, Djupinlärning, Överföringsinlärning, Självövervakad inlärning, Fordonsavkänning, Korsdomänsgeneralisering"
+€€€€,
+}
+}
