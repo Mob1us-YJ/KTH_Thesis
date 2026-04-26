@@ -1,0 +1,48 @@
+# TeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.lof
+*.lot
+*.lol
+*.out
+*.toc
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.atfi
+*.mw
+*.tdn
+*.synctex.gz
+*.synctex(busy)
+
+# minted cache
+_minted-*/
+
+# Morewrites temp
+*.mw
+
+# PDF (keep in repo if you want to track the compiled output; remove this line if so)
+# examplethesis.pdf
+
+# Claude Code internal directory
+.claude/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp scripts
+replace_chapters.py
