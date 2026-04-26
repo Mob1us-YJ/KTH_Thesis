@@ -6,26 +6,16 @@
 %% Based on the KTH thesis template (kththesis.cls)
 %%
 
-% Detect TeX engine
-\RequirePackage{ifxetex}
-\RequirePackage{ifluatex}
-\RequirePackage{etoolbox}
-\newif\ifxeorlua
-\ifxetex\xeorluatrue\fi
-\ifluatex\xeorluatrue\fi
+\documentclass[english,bibtex]{kththesis}
 
+% Set PDF minor version (engine flags defined by kththesis.cls)
 \ifxeorlua
-\ifdefined\directlua
-\directlua{pdf.setminorversion(7)}
-\else
-\special{pdf:minorversion 7}
+  \ifdefined\directlua
+    \directlua{pdf.setminorversion(7)}
+  \else
+    \special{pdf:minorversion 7}
+  \fi
 \fi
-\fi
-
-\documentclass[
-english,
-bibtex,
-]{kththesis}
 
 %% ─────────────────────────────────────────
 %%  Core packages

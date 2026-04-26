@@ -2,6 +2,12 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{kththesis}[2025/05/25 KTH Thesis formatting]
 
+\RequirePackage{etoolbox}  % needed for \newtoggle / \toggletrue / \iftoggle
+\RequirePackage{iftex}    % provides \ifXeTeX, \ifLuaTeX, \ifPDFTeX
+\newif\ifxeorlua
+\ifXeTeX\xeorluatrue\fi
+\ifLuaTeX\xeorluatrue\fi
+
 \newtoggle{digitaloutput}
 \DeclareOption{digitaloutput}{\toggletrue{digitaloutput}}
 
