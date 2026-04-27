@@ -1,0 +1,6 @@
+https://github.com/xyanchen/WiFi-CSI-Sensing-Benchmark
+https://www.cognitivesystems.com/wifi-motion/
+AutoFi: Towards Automatic WiFi Human Sensing via Geometric Self-Supervised Learning: https://arxiv.org/pdf/2205.01629
+https://github.com/NTUMARS/Awesome-WiFi-CSI-Sensing
+https://support.huawei.com/enterprise/en/doc/EDOC1100457361/18cab75f/overview-of-csi-sensing
+https://tns.thss.tsinghua.edu.cn/wst/

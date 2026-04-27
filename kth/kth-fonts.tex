@@ -14,8 +14,16 @@
   %\setmathfont{TeX Gyre Pagella Math}
   %\setmathfont{STIX Two Math}[version=bold, FakeBold=1.2] %% a font for math - even more glyphs
   %\setmathfont{STIX Two Math}[BoldFeatures={FakeBold=1.5}]
-  \newfontfamily\mystixtextfont{STIX Two Text}
-  \newfontfamily\greekfont[Script=Greek]{Noto Serif}
+  \IfFontExistsTF{STIX Two Text}{%
+    \newfontfamily\mystixtextfont{STIX Two Text}%
+  }{%
+    \newfontfamily\mystixtextfont{TeX Gyre Termes}%
+  }
+  \IfFontExistsTF{Noto Serif}{%
+    \newfontfamily\greekfont[Script=Greek]{Noto Serif}%
+  }{%
+    \newcommand\greekfont{\rmfamily}%
+  }
   % Devanagari font: try standard TeX Live name first, fall back to alternatives
   \IfFontExistsTF{Noto Sans Devanagari}{%
     \newfontfamily\hindifont[Script=Devanagari]{Noto Sans Devanagari}%
@@ -26,7 +34,11 @@
       \let\hindifont\rmfamily%
     }%
   }
-  \newfontfamily\russianfont[Script=Cyrillic]{Noto Serif}
+  \IfFontExistsTF{Noto Serif}{%
+    \newfontfamily\russianfont[Script=Cyrillic]{Noto Serif}%
+  }{%
+    \newcommand\russianfont{\rmfamily}%
+  }
   % CJK Simplified Chinese: try Overleaf/TeX Live name, then Windows name
   \IfFontExistsTF{Noto Sans CJK SC}{%
     \newfontfamily\cjkfont[Script=CJK]{Noto Sans CJK SC}%
@@ -64,13 +76,21 @@
   \newcommand\NotoSansJPFont{\rmfamily}
 \fi
 
-\newfontfamily{\NotoSansFont}[Ligatures=TeX,
-    Mapping=tex-text,
-    ]{Noto Sans}
+\IfFontExistsTF{Noto Sans}{%
+  \newfontfamily{\NotoSansFont}[Ligatures=TeX,
+      Mapping=tex-text,
+      ]{Noto Sans}%
+}{%
+  \newcommand\NotoSansFont{\sffamily}%
+}
 
-\newfontfamily{\NotoSerifFont}[Ligatures=TeX,
-    Mapping=tex-text,
-    ]{Noto Serif}
+\IfFontExistsTF{Noto Serif}{%
+  \newfontfamily{\NotoSerifFont}[Ligatures=TeX,
+      Mapping=tex-text,
+      ]{Noto Serif}%
+}{%
+  \newcommand\NotoSerifFont{\rmfamily}%
+}
 
 % for new KTH cover
 % Load the Arial font as it is used for the KTH covers

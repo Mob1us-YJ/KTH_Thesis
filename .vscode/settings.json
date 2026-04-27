@@ -16,8 +16,24 @@
       ]
     },
     {
+      "name": "lualatex",
+      "command": "lualatex",
+      "args": [
+        "-shell-escape",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ]
+    },
+    {
       "name": "bibtex",
       "command": "bibtex",
+      "args": ["%DOCFILE%"]
+    },
+    {
+      "name": "makeglossaries",
+      "command": "makeglossaries",
       "args": ["%DOCFILE%"]
     }
   ],
@@ -29,6 +45,14 @@
     {
       "name": "xelatex",
       "tools": ["xelatex"]
+    },
+    {
+      "name": "xelatex → bibtex → makeglossaries → xelatex × 2",
+      "tools": ["xelatex", "bibtex", "makeglossaries", "xelatex", "xelatex"]
+    },
+    {
+      "name": "lualatex",
+      "tools": ["lualatex"]
     }
   ],
   "latex-workshop.latex.recipe.default": "xelatex → bibtex → xelatex × 2"
