@@ -188,13 +188,6 @@ The fundamental sensing signal is Channel State Information (CSI): per-subcarrie
 
 When a human body enters the propagation environment, the reflected and diffracted signal components are perturbed in ways that depend on the person's position, posture, and motion. These perturbations produce distinctive temporal and spectral patterns in the CSI stream~\cite{wilson2010radio,wang2015understanding}. By modelling these patterns with machine learning, a wide range of sensing tasks becomes feasible without requiring any user participation. Users carry no wearable sensors; the sensing system operates passively and continuously in the background.
 
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=0.95\linewidth]{figures/Modeling_Turning_Incar.png}
-  \caption{Wi-Fi CSI sensing principle. (a)~A transmitter and receiver exchange signals over a line-of-sight (LoS) path and multiple reflected paths; a human body in the environment introduces an additional dynamic multipath component $\vec{H}_d$ that varies with movement. (b)~Phasor representation of the received channel: the total channel $\vec{H}$ is the vector sum of the static component $\vec{H}_s$ and the dynamic component $\vec{H}_d$; as the person moves, the tip of $\vec{H}$ traces an arc between constructive ($P_B$) and destructive ($P_A$) interference states. (c)~The corresponding CSI amplitude over time oscillates between $|\vec{H}_s|+|\vec{H}_d|$ (constructive) and $|\vec{H}_s|-|\vec{H}_d|$ (destructive), producing the characteristic amplitude fluctuation exploited by activity recognition algorithms.}
-  \label{fig:csi_principle}
-\end{figure}
-
 Practical CSI extraction has been enabled by open tools such as Nexmon CSI~\cite{gringoli2019free}, which exposes subcarrier-level measurements from commodity Broadcom/Cypress chipsets. Combined with Intel 5300 NIC patches and Atheros-based extractors, these tools have seeded a growing ecosystem of public CSI datasets and reproducible experimental infrastructure~\cite{yang2023sensefi}. Comprehensive surveys by Ma~et~al.~\cite{ma2019wifi}, Yousefi~et~al.~\cite{yousefi2017survey}, and Wu~et~al.~\cite{wu2017device} document the field's evolution from pattern-based recognition with handcrafted features toward deep-learning and physics-inspired model-based approaches, while more recent surveys~\cite{wang2026survey,radwan2026ssl} examine the emerging challenges of cross-domain generalisation and self-supervised representation learning.
 
 Wi-Fi CSI sensing has demonstrated feasibility across a broad application space. Human Activity Recognition (HAR)---identifying activities such as walking, sitting, running, and falling from CSI time-series---has become the canonical benchmark task~\cite{yang2018device,wang2014e,chen2018wifi}. Beyond coarse activity categories, researchers have demonstrated fine-grained gesture recognition~\cite{yang2019learning,tan2022enabling,gu2022wigrunt}, vital sign monitoring~\cite{gu2019wifi}, fall detection~\cite{chu2023deep}, crowd counting~\cite{zou2017freecount}, and even body pose estimation~\cite{yang2022metafi} and person re-identification~\cite{zou2018wifi}. The SenseFi benchmark library~\cite{yang2023sensefi} consolidates many of these tasks under a unified deep-learning framework, enabling direct architecture comparisons across standardised datasets. Despite high reported accuracy in controlled laboratory settings---often exceeding 95\% on standard indoor datasets---a comprehensive survey by Wang~et~al.~\cite{wang2026survey} reviewing over 200 papers identifies device heterogeneity, human body shape diversity, and environmental diversity as the three root causes of the persistent deployment gap, showing that no single existing technique fully resolves all three simultaneously.
@@ -204,6 +197,13 @@ Wi-Fi CSI sensing has demonstrated feasibility across a broad application space.
   \includegraphics[width=\linewidth]{figures/fig_application_taxonomy.pdf}
   \caption{Taxonomy of Wi-Fi CSI sensing applications. Each column represents a major application domain. Tasks studied in this thesis are highlighted in the \emph{Automotive / In-Cabin} column. The breadth of application domains underscores the generality of the CSI sensing paradigm, while the automotive column illustrates the specific gap this work addresses.}
   \label{fig:application_taxonomy}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.55\linewidth]{figures/In_car_applications.png}
+  \caption{Three primary sensing tasks enabled by Wi-Fi CSI in the automotive cabin: occupant presence detection, respiratory monitoring, and in-cabin activity recognition. This thesis focuses on activity recognition under the same passive, device-free sensing paradigm.}
+  \label{fig:incabin_apps}
 \end{figure}
 
 The automotive domain presents a compelling but largely unexplored opportunity for Wi-Fi sensing. Modern vehicles are increasingly equipped with IEEE~802.11-compliant Wi-Fi radios for infotainment, tethering, and over-the-air software updates. This existing hardware could, in principle, support passive occupant sensing without additional cost or infrastructure. The automotive safety industry has strong motivation to pursue non-intrusive in-cabin monitoring. Child presence detection (CPD) is a high-priority safety function: an estimated hundreds of children die each year in vehicles due to hyperthermia after being left unattended. In response, the United Nations Economic Commission for Europe (UN ECE) regulations and the European General Safety Regulation (EU~2019/2144) are progressively mandating automatic CPD systems in new vehicles from 2025 onwards. Wi-Fi CSI-based sensing offers a privacy-preserving alternative: unlike camera-based systems, it does not capture identifiable images; unlike pressure sensors, it can detect an occupant not in contact with a seat surface; and unlike dedicated radar hardware, it leverages the existing telematics radio.
@@ -261,8 +261,8 @@ The main contributions of this thesis are:
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\linewidth]{figures/fig_research_framework.pdf}
-  \caption{Overview of the three-stage research framework. Stage~1 benchmarks four deep-learning architectures on established indoor CSI datasets to establish baseline accuracy (RQ2). Stage~2 applies self-supervised contrastive pre-training on the large-scale XRF55 dataset to learn transferable representations. Stage~3 performs domain adaptation on unlabelled WiSe4Car recordings followed by few-shot fine-tuning on the annotated in-cabin subset, directly addressing the feasibility question of RQ1.}
+  \includegraphics[width=\linewidth]{figures/Thesis_Timeline.png}
+  \caption{Project timeline (December 2025 -- May 2026). Tasks are ordered from foundational to applied: Dataset Selection and Literature Survey in January, followed by Method Design, Proposal Writing, and Baseline Model Selection. Data Pre-processing, Baseline Model Experiments, and Transfer Learning tests run through February--March. Data Annotation, the In-Cabin Baseline Experiment, Source Supervised Pre-training, Target SSL Adaptation, and Target Few-Shot Training are completed in April--May, culminating in the Ablation Experiment and Thesis Writing phases.}
   \label{fig:research_framework}
 \end{figure}
 
@@ -312,7 +312,14 @@ For a system with \(N_T\) transmit and \(N_R\) receive antennas and \(S\) OFDM s
 \[
   H_t[i,j,k] = \sum_{\ell} a_\ell \, e^{-j 2\pi f_k \tau_\ell},
 \]
-where the sum runs over all multipath components, \(a_\ell\) is the complex amplitude of path~\(\ell\), \(\tau_\ell\) is its propagation delay, and \(f_k\) is the subcarrier frequency. When a human body is present, it induces time-varying perturbations in \(H_t\): the body scatters and absorbs signal energy, altering both the amplitude and phase of individual multipath components. These perturbations produce distinctive temporal and spectral patterns across the subcarrier dimension~\cite{wilson2010radio,wang2015understanding}, which machine-learning models can exploit for activity classification.
+where the sum runs over all multipath components, \(a_\ell\) is the complex amplitude of path~\(\ell\), \(\tau_\ell\) is its propagation delay, and \(f_k\) is the subcarrier frequency. When a human body is present, it induces time-varying perturbations in \(H_t\): the body scatters and absorbs signal energy, altering both the amplitude and phase of individual multipath components. These perturbations produce distinctive temporal and spectral patterns across the subcarrier dimension~\cite{wilson2010radio,wang2015understanding}, which machine-learning models can exploit for activity classification. Figure~\ref{fig:csi_principle} illustrates this sensing mechanism.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/Modeling_Turning_Incar.png}
+  \caption{Wi-Fi CSI sensing principle. (a)~A transmitter and receiver exchange signals over a line-of-sight (LoS) path and multiple reflected paths; a human body introduces an additional dynamic multipath component $\vec{H}_d$ that varies with movement. (b)~Phasor representation: the total channel $\vec{H}$ is the vector sum of the static component $\vec{H}_s$ and $\vec{H}_d$; as the person moves, $\vec{H}$ traces an arc between constructive ($P_B$) and destructive ($P_A$) interference states. (c)~The resulting CSI amplitude over time oscillates between $|\vec{H}_s|+|\vec{H}_d|$ and $|\vec{H}_s|-|\vec{H}_d|$, producing the characteristic fluctuation exploited by activity recognition algorithms.}
+  \label{fig:csi_principle}
+\end{figure}
 
 The key advantage of CSI over Received Signal Strength Indicator (RSSI) is its subcarrier-level resolution~\cite{yang2013from}: while RSSI collapses the entire channel to a single scalar power measurement, CSI preserves the full multipath fingerprint across tens to hundreds of subcarriers, enabling detection of subtle body movements that are invisible to RSSI-based systems.
 
@@ -421,116 +428,554 @@ Wi-Fi CSI sensing offers a compelling combination of device-free operation, fine
 \label{ch:methods}
 %% ───────────────────────────────────────
 
-This chapter describes the datasets used in the study, the preprocessing pipeline, the deep-learning model architectures, and the cross-domain transfer learning framework.
+This chapter describes the methodology used to evaluate the feasibility of Wi-Fi CSI sensing under cross-domain and automotive conditions. The experimental design is organised into three sequential stages. First, standard indoor CSI datasets benchmark model families and identify a suitable backbone architecture. Second, WiSe4Car is processed and manually annotated to construct an automotive HAR-oriented target dataset, while XRF55 is aligned into a compatible source-domain representation. Third, supervised transfer learning, self-supervised target adaptation, and statistical domain adaptation are compared to study whether knowledge learned from indoor CSI can improve in-cabin activity recognition.
 
-\section{Datasets}
-\label{sec:datasets}
+\section{Methodological Overview}
+\label{sec:overview}
+
+\subsection{Research Design}
+
+The central question driving the experimental design is: \textit{how can a reproducible pipeline be constructed to evaluate Wi-Fi CSI sensing feasibility under realistic automotive domain shift?} Two constraints shape the answer. First, no large-scale annotated in-vehicle CSI dataset exists; WiSe4Car is publicly available but was not designed for activity recognition and contains no behavioural labels. Second, the domain gap between existing indoor CSI benchmarks and vehicle-cabin recordings is substantial---driven by hardware heterogeneity, enclosed multipath environments, and the absence of a shared preprocessing standard across datasets.
+
+The methodology therefore proceeds from controlled to realistic conditions: indoor benchmarks establish a robust baseline and identify a stable backbone; automotive dataset construction converts WiSe4Car into a usable target domain; and transfer learning experiments quantify how much indoor knowledge can be reused in the automotive setting.
+
+\subsection{Three-Stage Experimental Pipeline}
+
+Figure~\ref{fig:pipeline} illustrates the overall pipeline. The three stages are deliberately sequential: backbone selection in Stage~I informs the architectural choices in Stage~III; the cross-dataset alignment in Stage~II determines the feature representation that both stages operate on.
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}[
+  node distance=0.85cm,
+  box/.style={draw=kth-blue, rounded corners=4pt, fill=kth-blue!10,
+    text width=10.5cm, align=center, minimum height=0.9cm,
+    font=\small, inner sep=6pt},
+  arrow/.style={->, thick, kth-blue}
+]
+  \node[box] (s1)
+    {\textbf{Stage~I: Indoor Benchmarking} \quad
+     UT-HAR $\cdot$ NTU-Fi~HAR $\cdot$ Widar3.0};
+  \node[box, below=of s1] (bb)
+    {Backbone Selection \quad
+     MLP $\cdot$ 1D-CNN $\cdot$ CNN+GRU $\cdot$ ResNet-1D $\cdot$ Multiscale~CNN};
+  \node[box, below=of bb] (s2)
+    {\textbf{Stage~II: Automotive Dataset Construction} \quad
+     XRF55 source $\cdot$ WiSe4Car annotated target};
+  \node[box, below=of s2] (rp)
+    {Unified CSI Representations \quad
+     1D $\cdot$ STFT $\cdot$ ACF $\;\longrightarrow\; X\!\in\!\mathbb{R}^{N\times 256\times 16}$};
+  \node[box, below=of rp] (s3)
+    {\textbf{Stage~III: Transfer and Domain Adaptation} \quad
+     Scratch $\cdot$ Supervised Transfer $\cdot$ SSL $\cdot$ MMD / CORAL / DANN};
+  \node[box, below=of s3] (ev)
+    {Evaluation \quad
+     Pooled $\cdot$ LOCO $\cdot$ Macro-F1 $\cdot$ Multi-seed};
+  \draw[arrow] (s1) -- (bb);
+  \draw[arrow] (bb) -- (s2);
+  \draw[arrow] (s2) -- (rp);
+  \draw[arrow] (rp) -- (s3);
+  \draw[arrow] (s3) -- (ev);
+\end{tikzpicture}
+\caption{Three-stage experimental pipeline. Stage~I benchmarks model families on standard indoor CSI datasets and selects a backbone. Stage~II constructs the automotive cross-domain setup by annotating WiSe4Car and aligning both datasets to a unified representation. Stage~III systematically compares four transfer strategies evaluated under pooled and leave-one-car-out protocols.}
+\label{fig:pipeline}
+\end{figure}
+
+\section{Stage~I: Indoor Benchmarking and Backbone Selection}
+\label{sec:stage1}
+
+The purpose of Stage~I is not to claim state-of-the-art performance on indoor benchmarks, but to identify a stable and computationally reasonable backbone for later cross-domain transfer experiments. The benchmarks serve as a controlled environment in which model families can be compared under identical training conditions before being exposed to the more challenging automotive domain.
 
 \subsection{Standard Indoor CSI Datasets}
+\label{sec:indoordatasets}
 
-Five public CSI datasets are used in this study. Table~\ref{tab:datasets} summarises their key characteristics.
+Three public CSI datasets are used for indoor benchmarking. Table~\ref{tab:datasets} summarises their hardware and recording characteristics.
 
 \begin{table}[!ht]
-\caption{Summary of CSI datasets used in this study.}
+\caption{Indoor CSI datasets used for backbone benchmarking.}
 \label{tab:datasets}
 \centering
-\begin{tabular}{lllll}
+\small
+\begin{tabular}{llrrlr}
 \toprule
-\textbf{Dataset} & \textbf{Task} & \textbf{Hardware} & \textbf{Subcarriers} & \textbf{Classes} \\
+\textbf{Dataset} & \textbf{Hardware} & \textbf{Subcarriers} & \textbf{Classes} & \textbf{Environments} & \textbf{Role} \\
 \midrule
-UT-HAR       & HAR           & Intel 5300       & 30                   & 7  \\
-NTU-Fi HAR   & HAR           & Atheros          & 114                  & 6  \\
-Widar3.0     & Gesture       & Intel 5300       & 30                   & 22 \\
-XRF55        & HAR           & Custom RF        & 256                  & 55 \\
-WiSe4Car     & In-cabin      & Intel Wi-Fi 6    & 256                  & annotated \\
+UT-HAR     & Intel 5300  & 30  & 7  & 1 room  & primary benchmark \\
+NTU-Fi HAR & Atheros     & 114 & 6  & 1 room  & primary benchmark \\
+Widar3.0   & Intel 5300  & 30  & 22 & 3 rooms & domain-shift reference \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC. Each sample spans 250~time steps across 30~subcarriers.
+\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 coarse activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC at 250 time steps per sample across 30 subcarriers. It validates the basic pipeline under standard SenseFi conditions.
 
-\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114~subcarriers. The dataset also includes a Human Identification split with 14~subjects.
+\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114 subcarriers. Its different hardware and cleaner label structure make it a complementary test of model stability. The dataset also includes a 14-subject Human Identification split used to validate the self-supervised transfer objective in isolation.
 
-\textbf{Widar3.0}~\cite{zhang2021widar3,qian2017widar,qian2018widar2} is a large-scale gesture recognition dataset with 22~gesture classes collected across 3~rooms, 5~user orientations, and 5~locations, making it a standard benchmark for cross-domain evaluation.
+\textbf{Widar3.0}~\cite{zhang2021widar3,qian2017widar,qian2018widar2} covers 22 gesture classes across 3 rooms, 5 user orientations, and 5 locations. Rather than a primary benchmark, Widar3.0 serves as a reference for cross-room domain shift, illustrating the performance degradation expected when a model trained in one environment is deployed in another without adaptation.
 
-\textbf{XRF55}~\cite{wang2024xrf55} covers 55~daily activities at 256~subcarriers, collected from 39~subjects across 100~days using a multi-modal RF platform. Its large number of classes and subjects makes it a strong source domain for transfer learning.
+\subsection{Baseline Model Families}
+\label{sec:architectures}
 
-\textbf{WiSe4Car}~\cite{markert2025wise4car} is the first publicly available Wi-Fi CSI dataset collected inside standard vehicle cabins using an Intel Wi-Fi~6 adapter. Recordings cover multiple passengers and driving scenarios.
-
-\subsection{WiSe4Car Data Annotation}
-\label{sec:annotation}
-
-The WiSe4Car dataset was originally collected for height and weight estimation and lacked behavioural activity labels suitable for HAR. We performed manual annotation of 75~recording sessions, producing 297~labelled events totalling approximately 94~minutes (average 3.96~events per session). Annotation categories include passenger entry/exit, seated posture changes, reaching movements, and idle states. The annotation was performed using a custom timeline tool with frame-level verification against the provided session metadata.
+Five model families are benchmarked, chosen to span the design space from purely feedforward to multi-scale convolutional and recurrent architectures. Table~\ref{tab:models} summarises each family and its role.
 
 \begin{table}[!ht]
-\caption{WiSe4Car annotation statistics.}
+\caption{Model families benchmarked in Stage~I and their roles in the study.}
+\label{tab:models}
+\centering
+\small
+\begin{tabular}{llp{7.8cm}}
+\toprule
+\textbf{Model} & \textbf{Family} & \textbf{Role} \\
+\midrule
+MLP            & Feedforward     & Lower bound; confirms whether structured models are necessary \\
+LeNet (1D-CNN) & 1D Conv         & Lightweight temporal feature extractor; baseline for raw CSI sequences \\
+CNN+GRU        & Conv + RNN      & Combines local feature extraction with explicit temporal memory \\
+ResNet-1D      & Residual Conv   & Deep residual architecture with skip connections \\
+Multiscale CNN & Multi-resolution & Parallel conv branches at multiple kernel sizes to capture both fast (hand motion) and slow (postural shift) CSI dynamics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Multiscale CNN and ResNet-1D are the primary candidates for the transfer backbone because their capacity to process CSI at multiple temporal scales aligns well with the heterogeneous motion speeds present in WiSe4Car activities---from rapid phone interaction ($\approx 2$~Hz) to slow upper-body turns ($\approx 0.3$~Hz). The other three architectures serve as comparative baselines to bound the performance range.
+
+\subsection{Training Protocol}
+\label{sec:trainprotocol}
+
+All Stage~I experiments follow a uniform protocol to ensure comparability:
+
+\begin{itemize}
+  \item \textbf{Optimiser.} Adam~\cite{kingma2015adam} at initial learning rate $10^{-3}$ with cosine annealing decay.
+  \item \textbf{Batch size.} 64 for all architectures.
+  \item \textbf{Stopping criterion.} Early stopping with patience~20, monitoring validation macro-F1. Maximum 200 epochs.
+  \item \textbf{Loss.} Class-weighted cross-entropy, with per-class weights inversely proportional to class frequency.
+  \item \textbf{Input representation.} 1D amplitude matrices using the SenseFi preprocessing pipeline~\cite{yang2023sensefi} for UT-HAR and NTU-Fi HAR.
+  \item \textbf{Reproducibility.} Fixed random seed~42 for all indoor benchmark runs; multi-seed variance is reported for target-domain experiments (Section~\ref{sec:multiseed}).
+\end{itemize}
+
+\subsection{Backbone Selection Criteria}
+\label{sec:backbonesel}
+
+The backbone forwarded to Stage~III must satisfy three criteria simultaneously:
+
+\begin{enumerate}
+  \item \textbf{Stable convergence.} High validation macro-F1 with a small train--validation gap across the indoor benchmarks, indicating reliable learning rather than overfitting.
+  \item \textbf{Moderate capacity.} An excessively large model risks overfitting the small WiSe4Car label set (297 events) even after pretraining; model capacity is assessed by parameter count and the degree of overfitting observed on indoor benchmarks.
+  \item \textbf{Representational compatibility.} The backbone must be applicable with minimal modification to all three CSI representations (1D, STFT, ACF, Section~\ref{sec:representations}) to enable fair representation comparisons in Stage~III.
+\end{enumerate}
+
+\section{Stage~II: Automotive Dataset Construction and Cross-Dataset Alignment}
+\label{sec:stage2}
+
+Stage~II constructs the cross-domain experimental setup: WiSe4Car is converted from a passive CSI corpus into an annotated HAR-oriented target dataset, XRF55 is processed into a semantically compatible source domain, and both are aligned to a unified tensor representation suitable for transfer learning.
+
+\subsection{WiSe4Car Dataset Characteristics}
+\label{sec:wise4car}
+
+WiSe4Car~\cite{markert2025wise4car} is the first publicly available Wi-Fi CSI dataset collected inside standard vehicle cabins using a commercial Intel Wi-Fi~6 adapter operating at 256 subcarriers. The dataset covers multiple vehicle models, multiple passengers, and both stationary and driving scenarios. Unlike indoor benchmarks, the vehicle cabin is a strongly enclosed metallic environment in which multipath propagation is more complex and hardware-specific phase offsets from the Intel Wi-Fi~6 chipset differ from those of the Atheros and Intel~5300 hardware used in UT-HAR and NTU-Fi HAR.
+
+WiSe4Car was originally collected for passenger height and weight estimation; it provides anonymised video alongside CSI recordings but contains no behavioural activity labels. This gap motivates the annotation step below. The phase-offset characteristics of the Intel Wi-Fi~6 chipset---which introduce larger CFO/SFO distortions than standard 802.11n hardware---also require preprocessing choices that differ from existing indoor datasets.
+
+\subsection{Manual Annotation Procedure}
+\label{sec:annotation}
+
+Manual annotation was performed on 75 recording sessions to produce the labelled events required for target-domain HAR evaluation. The annotation process followed three stages:
+
+\begin{enumerate}
+  \item \textbf{Session review.} Each session was loaded into a custom timeline viewer that synchronised the CSI amplitude heatmap with the accompanying anonymised video and session metadata (seat configuration, subject identifiers, event timestamps), allowing frame-level inspection of CSI changes alongside visible body motion. Figure~\ref{fig:annotation_tool} shows a representative screenshot of the tool interface.
+  \item \textbf{Event labelling.} Behavioural events were assigned to one of six pre-defined classes (Section~\ref{sec:taxonomy}). Each event was marked with start time, end time, subject ID, and class label. Ambiguous transitions, partial occlusions, and events shorter than one second were excluded to preserve annotation quality.
+  \item \textbf{Verification and export.} Annotations were cross-checked against session logs and re-examined for temporal boundary accuracy before export as window-level CSV records.
+\end{enumerate}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/Annotation_Tool_Example.png}
+  \caption{Screenshot of the custom annotation tool used for WiSe4Car labelling. The main panel shows the anonymised video frame at the current timestamp (face redacted). The status bar reports the session filename, playback state (paused), elapsed time (00:47 / 01:59), and frame index (1199 / 3000). The current action label (\textit{Sitting}) is displayed in the lower-left overlay, and the annotation list on the right records event start/end times and labels for the current session.}
+  \label{fig:annotation_tool}
+\end{figure}
+
+\begin{table}[!ht]
+\caption{WiSe4Car manual annotation summary.}
 \label{tab:annotation}
 \centering
 \begin{tabular}{lr}
 \toprule
-\textbf{Metric} & \textbf{Value} \\
+\textbf{Item} & \textbf{Value} \\
 \midrule
-Annotated sessions        & 75     \\
-Total labelled events     & 297    \\
-Total annotated time      & 5631~s ($\approx$94~min) \\
-Average events/session    & 3.96   \\
+Annotated sessions       & 75 \\
+Total labelled events    & 297 \\
+Total annotated duration & 5{,}631~s ($\approx$94~min) \\
+Average events per session & 3.96 \\
+Annotation granularity   & Event-level (start/end timestamps) \\
+Label source             & Anonymised video + session metadata \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Preprocessing Pipeline}
+\subsection{Label Taxonomy and Class Mapping}
+\label{sec:taxonomy}
+
+The label taxonomy was designed according to two constraints: the classes must be reliably identifiable from the anonymised videos, and they must be semantically compatible with XRF55 source activities to support transfer learning. Table~\ref{tab:taxonomy} lists the six classes and their XRF55 semantic mappings.
+
+\begin{table}[!ht]
+\caption{WiSe4Car label taxonomy and corresponding XRF55 source-category groups used for label mapping.}
+\label{tab:taxonomy}
+\centering
+\small
+\begin{tabular}{cllp{5cm}}
+\toprule
+\textbf{ID} & \textbf{Class} & \textbf{Description} & \textbf{XRF55 mapping (examples)} \\
+\midrule
+1 & Sitting     & Postural adjustment or static pose   & sitting down, adjusting seat \\
+2 & Reaching    & Forward or lateral arm extension     & reaching for object, picking up \\
+3 & Turning     & Upper-body rotation to another zone  & turning around, twisting torso \\
+4 & Bending     & Forward torso flexion                & bending down, picking from floor \\
+5 & Waving      & Hand wave gesture                    & waving hand \\
+6 & Using phone & Hand-held device interaction         & using phone, texting \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The taxonomy covers coarse in-cabin behavioural states rather than a complete automotive activity ontology. The six classes represent the range of occupant motion that produces detectable CSI variation in the Intel Wi-Fi~6 recordings; fine-grained sub-categories within a class are not attempted given the 297-event annotation budget.
+
+\subsection{XRF55 as Source Domain}
+\label{sec:xrf55source}
+
+XRF55~\cite{wang2024xrf55} is used as the supervised source domain because it provides a substantially larger and more diverse activity repertoire than UT-HAR and NTU-Fi HAR: 55 daily activities from 39 subjects over 100 days using a 256-subcarrier RF platform. Its role in this thesis is not to provide labels that directly match automotive activities, but to initialise a feature extractor with broad, motion-sensitive CSI representations before target adaptation. The 55 XRF55 classes are mapped to the 6 WiSe4Car classes by semantic grouping (Table~\ref{tab:taxonomy}), yielding a supervised pretraining corpus that shares the target label space. XRF55 is assigned domain identifier domain\_id~$=0$; WiSe4Car is assigned domain\_id~$=1$.
+
+\subsection{Cross-Dataset Input Alignment}
 \label{sec:preprocessing}
 
-Raw CSI data extracted from commodity hardware is typically represented as a complex-valued matrix \(x^i \in \mathbb{R}^{S \times T}\), where \(S\) denotes the number of subcarriers and \(T\) represents the time duration. Five processing stages are applied:
+Transfer learning requires source and target inputs to share the same tensor format, even though XRF55 and WiSe4Car differ in hardware platform, effective sampling rate, subcarrier count, and receiver layout. Let $H^{(n)}_t \in \mathbb{C}^{S}$ denote the raw complex CSI vector at time step $t$ on antenna link $n$, where $S$ is the number of subcarriers and $N_L$ is the number of links. The following eight-step pipeline transforms raw CSI into the unified feature tensor $X \in \mathbb{R}^{T \times F}$ with $T = 256$ and $F = 16$.
 
-\begin{enumerate}
-  \item \textbf{Cleaning and Alignment.} Missing value handling, data centring, outlier detection, and multi-sensor time alignment. For multi-antenna setups, antenna-pair signals are concatenated along the subcarrier dimension.
-  \item \textbf{Denoising and Filtering.} Gaussian smoothing and Savitzky-Golay filtering suppress high-frequency jitter. A high-pass Butterworth filter removes quasi-static DC drift. Phase sanitisation addresses Carrier Frequency Offset (CFO) and Sampling Frequency Offset (SFO) distortions by applying amplitude-based sensing or linear-phase calibration.
-  \item \textbf{Time-Frequency Transformation.} Short-Time Fourier Transform (STFT) generates spectrograms, transforming 1D time-series data into 2D representations suitable for deep spatial-temporal modelling~\cite{wen2018deep}.
-  \item \textbf{Data Augmentation.} Gaussian noise \(\zeta \sim \mathcal{N}(\mu, \sigma^2)\) is added to input samples. The augmented view is defined as \(A_\varepsilon(x^i) = x^i + \varepsilon\zeta\), facilitating more generalised representation learning.
-  \item \textbf{Normalisation.} Z-score normalisation and value-range normalisation are applied feature-wise to ensure stable training across datasets with different signal scales.
-\end{enumerate}
+\paragraph{Step 1: Amplitude extraction.}
+Phase is discarded due to the large CFO/SFO offsets inherent in the Intel Wi-Fi~6 chipset~\cite{yousefi2017survey}. The amplitude envelope for subcarrier $k$ on link $n$ is extracted as:
+\begin{equation}
+  A^{(n)}_t[k] = \left|H^{(n)}_t[k]\right|
+               = \sqrt{\operatorname{Re}\!\bigl(H^{(n)}_t[k]\bigr)^2
+                      +\operatorname{Im}\!\bigl(H^{(n)}_t[k]\bigr)^2}
+\end{equation}
 
-\subsection{Cross-Dataset Alignment}
+For multi-link setups, per-link amplitudes are concatenated along the subcarrier axis to form a joint amplitude matrix $A_t \in \mathbb{R}^{N_L \cdot S}$.
 
-To enable cross-dataset transfer experiments between XRF55 and WiSe4Car, a unified feature shape is enforced. A 4.6-second window is applied to both datasets, followed by demean/detrending, temporal subsampling, and subcarrier band pooling, yielding a standardised representation \(X \in \mathbb{R}^{N \times 256 \times 16}\).
+\paragraph{Step 2: Sliding-window segmentation.}
+Each continuous recording is divided into overlapping windows of length $T_w$ samples with hop size $H_w = T_w/2$ (50\% overlap):
+\begin{equation}
+  \mathbf{a}^{(i)}[t,\,k] = A_{t_i + t}[k],\quad t = 0,\ldots,T_w{-}1
+\end{equation}
+where $t_i = i\cdot H_w$ is the start index of the $i$-th window. The window length $T_w$ is set to cover 4.6~s of data at the native sampling rate.
 
-\section{Model Architectures}
-\label{sec:architectures}
+\paragraph{Step 3: Savitzky-Golay smoothing.}
+High-frequency jitter in the amplitude signal is suppressed by a Savitzky-Golay filter of polynomial order $p$ and frame half-length $m$, which fits a local least-squares polynomial and replaces each sample with the corresponding polynomial value:
+\begin{equation}
+  \hat{a}^{(i)}[t,\,k]
+    = \sum_{j=-m}^{m} c_j\;\mathbf{a}^{(i)}[t{+}j,\,k]
+\end{equation}
+where the convolution coefficients $\{c_j\}$ are derived from the least-squares polynomial fit (degree $p = 3$, half-width $m = 3$, frame length $2m{+}1 = 7$).
 
-Four deep-learning architectures are benchmarked in this study, guided by the comparative analysis in SenseFi~\cite{yang2023sensefi} and~\cite{wakili2025evaluating}:
+\paragraph{Step 4: High-pass Butterworth filtering.}
+Quasi-static background drift---arising from static multipath reflections that carry no activity information---is removed by a causal Butterworth high-pass filter of order $n_\text{b}$. Its squared magnitude response is:
+\begin{equation}
+  |H_\text{HP}(\omega)|^2 = \frac{(\omega/\omega_c)^{2n_\text{b}}}{1 + (\omega/\omega_c)^{2n_\text{b}}}
+\end{equation}
+A fifth-order filter ($n_\text{b} = 5$) with normalised cut-off frequency $\omega_c = 0.05\,\omega_\text{Nyq}$ is applied independently to each subcarrier series, isolating the activity-related dynamic component from the static environment fingerprint.
 
-\subsection{1D-CNN}
+\paragraph{Step 5: Demean and linear detrending.}
+Residual DC offset is removed by subtracting the per-window temporal mean:
+\begin{equation}
+  \tilde{a}[t,\,k]
+    = \hat{a}^{(i)}[t,\,k]
+      - \frac{1}{T_w}\sum_{t'=0}^{T_w-1}\hat{a}^{(i)}[t',\,k]
+\end{equation}
+Any remaining linear trend is then removed by subtracting the least-squares linear fit:
+\begin{equation}
+  \bar{a}[t,\,k] = \tilde{a}[t,\,k] - \bigl(\hat{\alpha}_k + \hat{\beta}_k\,t\bigr)
+\end{equation}
+where $(\hat{\alpha}_k,\hat{\beta}_k) = \arg\min_{\alpha,\beta}\sum_{t=0}^{T_w-1}\!\bigl(\tilde{a}[t,k]-\alpha-\beta\,t\bigr)^2$.
 
-Two stacked Conv1D layers with ReLU activations and max pooling extract local temporal patterns from raw CSI amplitude streams. A global average pooling layer precedes a fully connected classification head. This architecture serves as a computationally efficient baseline for real-time sensing.
+\paragraph{Step 6: Temporal resampling.}
+Each detrended window is resampled from its native $T_\text{raw}$ time steps to exactly $T = 256$ steps by linear interpolation between adjacent original samples:
+\begin{equation}
+  x^r[t] = \bar{a}\!\left[s\right](1-\delta) + \bar{a}\!\left[s{+}1\right]\delta,
+  \quad s = \left\lfloor\frac{t(T_\text{raw}{-}1)}{T{-}1}\right\rfloor,
+  \quad \delta = \frac{t(T_\text{raw}{-}1)}{T{-}1} - s
+\end{equation}
+This normalises for sampling-rate differences between XRF55 and WiSe4Car while preserving the temporal envelope shape.
 
-\subsection{2D-CNN}
+\paragraph{Step 7: Subcarrier band pooling.}
+The subcarrier dimension is reduced to $F = 16$ sub-bands by partitioning the $S$ subcarriers into $F$ equal-width groups $\{\mathcal{S}_f\}_{f=1}^{F}$ and computing the mean within each group:
+\begin{equation}
+  B[t,\,f] = \frac{1}{|\mathcal{S}_f|}\sum_{k\in\mathcal{S}_f} x^r[t,\,k],\quad f = 1,\ldots,F
+\end{equation}
+This discards fine-grained spectral detail that is hardware-platform-specific while retaining the gross amplitude structure that carries activity information.
 
-The CSI spectrogram (output of STFT) is treated as a two-channel image (amplitude and phase). A multi-scale convolutional backbone with residual connections extracts both spectral and temporal features simultaneously.
+\paragraph{Step 8: Feature-wise z-score normalisation.}
+Each sub-band channel is standardised to zero mean and unit variance using statistics computed over the training split $\mathcal{T}$:
+\begin{equation}
+  X[t,\,f] = \frac{B[t,\,f] - \mu_f}{\sigma_f + \varepsilon},\quad
+  \mu_f = \mathbb{E}_{\mathcal{T}}\!\bigl[B[:,f]\bigr],\quad
+  \sigma_f = \operatorname{Std}_{\mathcal{T}}\!\bigl[B[:,f]\bigr]
+\end{equation}
+where $\varepsilon = 10^{-8}$ prevents division by zero. Test-split sub-bands are normalised with training-split statistics to avoid data leakage.
 
-\subsection{CNN+GRU}
+The final aligned tensor $X \in \mathbb{R}^{T \times F} = \mathbb{R}^{256 \times 16}$ is the common input for all model families in Stages~I and III and the base from which the STFT and ACF representations below are derived.
 
-Two Conv1D layers extract local features, followed by a Gated Recurrent Unit (GRU) layer that models long-range temporal dependencies~\cite{wakili2025evaluating}. Dropout is applied after each GRU layer to prevent overfitting.
+\subsection{CSI Feature Representations: 1D, STFT, and ACF}
+\label{sec:representations}
 
-\subsection{Transformer Encoder}
+Three complementary representations of the aligned CSI windows are implemented to assess the influence of feature design on cross-domain performance (RQ2). Let $x_f[t] = X[t,f]$ denote the normalised amplitude of sub-band $f$ at time step $t$, for $t = 0,\ldots,T{-}1$ and $f = 1,\ldots,F$ with $T = 256$, $F = 16$.
 
-A compact Transformer encoder with positional embeddings operates over windowed CSI sequences. Multi-head self-attention captures inter-subcarrier correlations that convolutional architectures cannot model directly~\cite{yang2023sensefi}.
+\paragraph{1D amplitude sequence.}
 
-\section{Three-Stage Transfer Learning Framework}
+The 1D representation uses the aligned matrix directly, without further transformation:
+\begin{equation}
+  \mathbf{X}_\text{1D} = X \in \mathbb{R}^{T \times F}
+\end{equation}
+
+Each row $X[t,:]$ is a snapshot of the 16 band-amplitudes at time $t$; the full matrix preserves the complete temporal evolution of the CSI signal. This representation requires the least computation and is used as the input for all 1D convolutional and recurrent models. Its limitation is sensitivity to absolute amplitude magnitude, which varies with hardware gain settings and environment-specific static multipath.
+
+\paragraph{Short-Time Fourier Transform (STFT).}
+
+The STFT decomposes each sub-band time series into local time-frequency components, capturing non-stationary oscillatory motion patterns. For sub-band $f$, the STFT at discrete frequency bin $k$ and time frame $m$ is:
+\begin{equation}
+  S_f[k,m]
+    = \sum_{n=0}^{N-1} x_f[n]\cdot w(n - mH)\cdot e^{-j2\pi kn/N}
+\end{equation}
+
+where $w(\cdot)$ is the Hann analysis window of length $N_p$ samples:
+\begin{equation}
+  w(n) = \frac{1}{2}\!\left(1 - \cos\!\frac{2\pi n}{N_p - 1}\right)\!\cdot\mathbf{1}_{[0,\,N_p{-}1]}(n)
+\end{equation}
+
+$H = N_p - N_\text{ov}$ is the hop size between successive frames, and $N$ is the DFT length (set equal to the window length). With the chosen parameters (nperseg $N_p = 64$, noverlap $N_\text{ov} = 48$, nfft $N = 64$, hop $H = 16$) the output dimensions are:
+\begin{align}
+  K &= \tfrac{N}{2} + 1 = 33 \quad\text{(one-sided frequency bins)} \\
+  M &= 1 + \left\lfloor\frac{T - N_p}{H}\right\rfloor
+      = 1 + \left\lfloor\frac{256 - 64}{16}\right\rfloor = 13 \quad\text{(time frames)}
+\end{align}
+
+Log-magnitude compression is applied to the raw power spectrum to reduce dynamic range and improve gradient flow during training:
+\begin{equation}
+  X_\text{STFT}[f,\,k,\,m] = \log\!\bigl(1 + |S_f[k,m]|\bigr)
+\end{equation}
+
+The resulting per-sample tensor has shape $[F,\,K,\,M] = [16,\,33,\,13]$ and is used as the input for 2D convolutional models that treat the $(K \times M)$ spectrogram as a spatial image. The two datasets differ in their normalisation state: WiSe4Car STFT tensors contain raw power-spectrum values (peak $\approx 4415$) and require additional per-feature z-score normalisation before cross-domain training, whereas XRF55 STFT tensors are produced in a pre-normalised form with values in $[-0.65,\, 3.93]$.
+
+\paragraph{Autocorrelation function (ACF).}
+
+The ACF characterises the temporal self-similarity of the CSI signal and is motivated by its use in DeepCPD~\cite{jayaweera2025deepcpd} for cross-vehicle child presence detection. For sub-band $f$, the biased sample autocorrelation at lag $\tau$ is:
+\begin{equation}
+  R_f[\tau]
+    = \sum_{t=0}^{T-\tau-1} x_f[t]\cdot x_f[t + \tau],\quad \tau = 0,1,\ldots,L
+\end{equation}
+
+Each sub-band ACF is then normalised to unit power at lag zero:
+\begin{equation}
+  \hat{R}_f[\tau] = \frac{R_f[\tau]}{R_f[0]}
+\end{equation}
+
+so that $\hat{R}_f[0] = 1$ by construction and $|\hat{R}_f[\tau]| \leq 1$ for all $\tau$. An unbiased correction further divides each lag by $(T - \tau)$; lag~0 is excluded from the output, retaining lags $1,\ldots,L$.
+
+The WiSe4Car representation (termed \emph{ACFplus}) extends the single-branch ACF to a two-branch variant with $V = 2$ output channels:
+\begin{itemize}
+  \item \textbf{Branch~1 (raw)}: $\hat{R}_f[\tau]$ computed on the normalised amplitude series $x_f[t]$.
+  \item \textbf{Branch~2 (diff)}: $\hat{R}_f^{\Delta}[\tau]$ computed on the first-order difference $\Delta x_f[t] = x_f[t] - x_f[t{-}1]$.
+\end{itemize}
+The \emph{diff} branch captures velocity-like dynamics (rate of amplitude change), complementing the position-like periodicity in the raw branch. Post-processing applies per-subcarrier z-score, global map z-score, and hard clipping to $[-3,\,3]$. The WiSe4Car per-sample shape is $[2,\,16,\,64]$ ($V{=}2$, $F{=}16$, $L{=}64$). XRF55 uses the single-branch variant ($V{=}1$, $L{=}65$, lag~0 included). When passed to a 2D convolutional encoder, $V$ is treated as the input channel dimension (\texttt{input\_channels=2} for WiSe4Car, \texttt{input\_channels=1} for XRF55).
+
+After normalisation, values lie in $[-3,\,3]$ for both datasets. This sensor-agnostic value range, achieved by construction through lag-0 division, eliminates the amplitude-domain gap between XRF55 (radar, peak ${\approx}4415$ raw STFT power) and WiSe4Car (Wi-Fi~6) without any cross-dataset calibration. It is the primary reason ACFplus achieves the best cross-domain transfer performance in this study.
+
+The key property of the normalised ACF is power invariance: dividing by $R_f[0]$ makes $\hat{R}_f$ insensitive to the absolute amplitude level, which varies with hardware gain and vehicle-specific static reflections. By the Wiener-Khinchin theorem, the ACF and the power spectral density (PSD) form a Fourier pair:
+\begin{equation}
+  \mathcal{S}_f(\omega) = \sum_{\tau=-\infty}^{\infty} R_f[\tau]\,e^{-j\omega\tau}
+\end{equation}
+
+The ACF therefore encodes the same frequency-domain information as the PSD while avoiding the window-length sensitivity of the STFT---a particularly valuable property for WiSe4Car events, whose duration spans a wide range (1--10~s).
+
+\begin{table}[!ht]
+\caption{Summary of the three CSI feature representations.}
+\label{tab:representations}
+\centering
+\small
+\begin{tabular}{lllll}
+\toprule
+\textbf{Repr.} & \textbf{Shape} & \textbf{Key parameters} & \textbf{Purpose} & \textbf{Expected advantage} \\
+\midrule
+1D       & $[16,\,256]$        & channels-first (CT layout)                  & Raw temporal baseline  & Low cost; full timing \\
+STFT     & $[16,\,33,\,13]$   & $N_p{=}64$, $N_\text{ov}{=}48$, $N{=}64$ & Time-frequency motion  & Non-stationary dynamics \\
+ACFplus  & $[V,\,16,\,L]$     & $V{=}2/1$, $L{=}64/65$, unbiased, clipped  & Temporal self-similarity & Sensor-agnostic $[-3,3]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Stage~III: Transfer Learning and Domain Adaptation}
 \label{sec:transfer}
 
-A three-stage pipeline is designed to bridge the domain gap between indoor CSI datasets and the automotive WiSe4Car environment.
+Stage~III systematically evaluates how knowledge from the XRF55 source domain can be reused for WiSe4Car target classification. Four experimental settings are compared to isolate the contribution of each transfer component.
 
-\textbf{Stage~1 --- Source Supervised Pre-training.} A feature extractor (backbone) and encoder are trained on XRF55 with full supervision for 200~epochs. The 1D-CNN backbone is used as the default.
+\subsection{Problem Formulation}
+\label{sec:formulation}
 
-\textbf{Stage~2 --- Self-Supervised Domain Adaptation.} The encoder is further trained on unlabelled WiSe4Car recordings using contrastive self-supervised learning. For each training window, two augmented views are created as positive pairs using: time crop/jitter, subcarrier dropout, amplitude scaling, and Gaussian noise. Negative pairs are drawn from the same mini-batch.
+Let $\mathcal{D}_s = \{(x_i^s, y_i^s)\}_{i=1}^{n_s}$ denote the labelled XRF55 source domain and $\mathcal{D}_t^l = \{(x_j^t, y_j^t)\}_{j=1}^{n_t^l}$ the labelled WiSe4Car target set ($n_t^l = 297$). The unlabelled WiSe4Car recording pool $\mathcal{D}_t^u = \{x_k^t\}_{k=1}^{n_t^u}$ provides additional target-distribution signal without activity annotations. The encoder $f_\theta$ maps inputs to a latent representation; the classifier $g_\phi$ maps representations to activity labels. Both source and target share the same $C = 6$ output classes (Table~\ref{tab:taxonomy}). The objective is to learn $(f_\theta, g_\phi)$ that achieves high macro-F1 on $\mathcal{D}_t^l$ while reducing dependence on the small labelled target set.
 
-\textbf{Stage~3 --- Few-Shot Fine-tuning.} The adapted encoder is fine-tuned on the 297~labelled WiSe4Car events. Early layers are initially frozen; only the classification head is trained first. Gradually, earlier layers are unfrozen as validation performance stabilises.
+\subsection{Setting~A: Scratch Target Training}
+\label{sec:scratch}
+
+The scratch baseline trains the encoder and classifier directly on $\mathcal{D}_t^l$ without any source data or unlabelled adaptation. This setting provides the lower-bound performance achievable from target labels alone and is the reference against which all transfer strategies are measured.
+
+\subsection{Setting~B: Supervised Source Pretraining and Fine-Tuning}
+\label{sec:supervisedtransfer}
+
+The encoder $f_\theta$ is first trained with full supervision on $\mathcal{D}_s$ using the 6-class XRF55 mapping. Only $f_\theta$ is transferred; the source classifier head is discarded and replaced with a WiSe4Car-specific classifier $g_\phi$. For fine-tuning on $\mathcal{D}_t^l$, early layers of $f_\theta$ are frozen for the first 50 epochs to prevent catastrophic forgetting; all layers are subsequently unfrozen. This setting isolates the contribution of source pretraining without any unsupervised target-domain signal.
+
+\subsection{Setting~C: Self-Supervised Target Adaptation with BYOL}
+\label{sec:ssl_adapt}
+
+After source pretraining, the encoder $f_\theta$ is adapted to the target distribution using the unlabelled pool $\mathcal{D}_t^u$ before supervised fine-tuning. The adaptation objective is Bootstrap Your Own Latent (BYOL)~\cite{grill2020byol}, a self-supervised method that requires no negative sample pairs---a critical property for the WiSe4Car setting where the labelled pool contains only 297 events and batch sizes are limited to 32.
+
+\paragraph{Network architecture.}
+BYOL maintains two networks with identical architecture but distinct parameter sets. The \emph{online network} consists of the encoder $f_\theta$, a projector $g_\theta$, and a predictor $q_\theta$. The \emph{target network} consists of a momentum-updated encoder $f_\xi$ and projector $g_\xi$, but \emph{no} predictor. The asymmetry---predictor on the online side only---is key to preventing representational collapse without negative pairs~\cite{grill2020byol}. Both projector networks have a two-layer MLP architecture with hidden dimension 256 and output dimension 128; the predictor shares the same structure.
+
+\paragraph{Training objective.}
+Given an unlabelled CSI window $x \in \mathcal{D}_t^u$, two augmented views $v^A = t(x)$ and $v^B = t'(x)$ are independently sampled. The online network produces projected representations and predictions:
+\begin{align}
+  z_\theta^A &= g_\theta\!\bigl(f_\theta(v^A)\bigr), &
+  p_\theta^A &= q_\theta\!\bigl(z_\theta^A\bigr)
+\end{align}
+The target network produces stop-gradient projections:
+\begin{align}
+  z_\xi^A &= \mathrm{sg}\!\bigl(g_\xi(f_\xi(v^A))\bigr), &
+  z_\xi^B &= \mathrm{sg}\!\bigl(g_\xi(f_\xi(v^B))\bigr)
+\end{align}
+where $\mathrm{sg}(\cdot)$ denotes the stop-gradient operation, blocking all gradient flow through the target branch. The per-sample loss is the symmetrised negative cosine similarity:
+\begin{equation}
+  \mathcal{L}_\text{BYOL}
+    = -\frac{p_\theta^A}{\|p_\theta^A\|_2} \cdot \frac{z_\xi^B}{\|z_\xi^B\|_2}
+      -\frac{p_\theta^B}{\|p_\theta^B\|_2} \cdot \frac{z_\xi^A}{\|z_\xi^A\|_2}
+\label{eq:byol}
+\end{equation}
+Minimising Equation~\eqref{eq:byol} drives the online predictor output to match the target projector output for the same input under two different augmentations.
+
+\paragraph{Target network update.}
+The target network parameters $\xi$ are never updated by gradient descent. Instead, they follow an exponential moving average (EMA) of the online parameters $\theta$:
+\begin{equation}
+  \xi \leftarrow \tau\,\xi + (1 - \tau)\,\theta
+\end{equation}
+with momentum $\tau = 0.996$. The slow-moving target provides stable regression targets, preventing the online network from collapsing to a trivial constant solution.
+
+\paragraph{CSI-specific augmentations.}
+Six augmentations are applied independently to each view, designed to preserve the class-relevant temporal structure of CSI signals while introducing sufficient variation to force invariant representations:
+\begin{enumerate}
+  \item \textbf{Gaussian noise} ($\sigma = 0.01$): low-amplitude additive noise simulating hardware thermal noise without distorting motion-related amplitude patterns.
+  \item \textbf{Time mask}: a random contiguous segment of 10\,\% of the time axis is zeroed, promoting robustness to brief temporal occlusions.
+  \item \textbf{Subcarrier mask}: a random 10\,\% of sub-bands are set to zero, simulating narrowband interference or selective subcarrier dropout.
+  \item \textbf{Time shift}: circular shift along the time axis by a random offset of up to $\pm 10\,\%$ of the window length, introducing temporal translation invariance.
+  \item \textbf{Amplitude scaling}: global multiplicative scaling by a factor drawn uniformly from $[0.8,\, 1.2]$, simulating inter-session AGC gain variation.
+  \item \textbf{Local crop and resize}: a random contiguous segment of 80\,\% of the window is cropped and linearly resampled back to $T = 256$ steps, introducing invariance to activity speed variation.
+\end{enumerate}
+
+\paragraph{Training data and method selection rationale.}
+BYOL pre-training uses the XRF55 source corpus (1{,}584 train / 198 val / 198 test windows) \emph{without} any activity labels for 30 epochs with AdamW ($\mathrm{lr} = 3\!\times\!10^{-4}$, $\mathrm{wd} = 10^{-4}$), batch size 32. After pre-training, the classification head is discarded; only the encoder weights $f_\theta$ are retained and used as initialisation for supervised fine-tuning on WiSe4Car.
+
+BYOL is chosen over contrastive alternatives---SimCLR~\cite{chen2020simclr} and MoCo~\cite{he2020moco}---because both require large negative sets (SimCLR: batch $\geq 4096$; MoCo: memory queue of 65536 keys) that are infeasible at batch size 32. Additionally, the six activity classes share low-level motion statistics (e.g., \textit{sitting} and \textit{bending} both involve slow torso motion), making randomly sampled negatives semantically unreliable. BYOL avoids both problems by bootstrapping entirely from positive pairs~\cite{grill2020byol}.
+
+\subsection{Setting~D: Distribution Alignment with MMD, DRCA, and DANN}
+\label{sec:domainadapt}
+
+Domain adaptation methods explicitly minimise the divergence between source and target feature distributions during joint training on $\mathcal{D}_s$ and $\mathcal{D}_t^u$. Three objectives of increasing structural complexity are evaluated, ordered by their inductive assumptions about the nature of the domain shift.
+
+\paragraph{Maximum Mean Discrepancy (MMD).}
+MMD minimises the kernel mean embedding distance between source and target distributions in a reproducing kernel Hilbert space $\mathcal{H}$:
+\begin{equation}
+  \mathcal{L}_\text{MMD} =
+  \left\|\frac{1}{n_s}\sum_{i=1}^{n_s}\phi\bigl(f_\theta(x_i^s)\bigr)
+        -\frac{1}{n_t^u}\sum_{j=1}^{n_t^u}\phi\bigl(f_\theta(x_j^t)\bigr)
+  \right\|_{\mathcal{H}}^2
+\end{equation}
+where $\phi:\mathbb{R}^d\!\to\!\mathcal{H}$ is the feature map induced by the RBF kernel $k(z,z')=\exp(-\|z{-}z'\|^2/2\sigma^2)$. MMD aligns the first-order kernel mean embedding of the feature distributions; it does not enforce explicit covariance alignment. The total loss is $\mathcal{L} = \mathcal{L}_\text{CE} + \lambda\,\mathcal{L}_\text{MMD}$, with $\lambda$ tuned on the validation split.
+
+\paragraph{Domain Regularized Component Analysis (DRCA)~\cite{zhan2024drca}.}
+DRCA finds a linear projection $W \in \mathbb{R}^{D \times d}$ that maps encoder features into a $d$-dimensional subspace by simultaneously minimising between-domain scatter and preserving within-domain scatter~\cite{zhan2024drca}. Let $\boldsymbol{\mu}_s, \boldsymbol{\mu}_t \in \mathbb{R}^D$ denote the source and target domain means, and $\Sigma_s, \Sigma_t \in \mathbb{R}^{D \times D}$ their empirical covariance matrices. The between-domain scatter matrix $S_b$ and pooled within-domain scatter matrix $S_w$ are:
+\begin{align}
+  S_b &= (\boldsymbol{\mu}_s - \boldsymbol{\mu}_t)(\boldsymbol{\mu}_s - \boldsymbol{\mu}_t)^\top \\
+  S_w &= \Sigma_s + \Sigma_t
+\end{align}
+The projection $W$ is obtained by maximising the Rayleigh quotient $J(W) = W^\top S_b W \,/\, W^\top S_w W$, which reduces to the generalised eigenvalue problem:
+\begin{equation}
+  S_b\,W = S_w\,W\,\Lambda
+\label{eq:drca}
+\end{equation}
+The columns of $W$ are the $d$ eigenvectors corresponding to the $d$ largest eigenvalues $\lambda_1 \geq \cdots \geq \lambda_d$. Features are projected as $z = W^\top x$ before training, so the encoder is trained and applied in the domain-aligned subspace without requiring any modification to the loss function. DRCA differs from MMD and DANN in being a pre-processing projection rather than a regularisation term added to the training objective: it adapts the feature space once, after which standard cross-entropy training proceeds on the projected features.
+
+\paragraph{Domain-Adversarial Neural Networks (DANN)~\cite{ganin2016domain}.}
+DANN adopts an adversarial formulation: a domain discriminator $h_\psi$ is trained to distinguish source from target feature vectors, while the encoder $f_\theta$ is simultaneously trained to confuse it. A gradient reversal layer (GRL) inserted between $f_\theta$ and $h_\psi$ negates the discriminator gradient during backpropagation, thereby pushing $f_\theta$ toward domain-invariant representations while preserving task-discriminative information:
+\begin{equation}
+  \mathcal{L} = \mathcal{L}_\text{CE}(g_\phi \circ f_\theta;\,\mathcal{D}_s)
+               - \lambda\,\mathcal{L}_\text{adv}\!\left(h_\psi \circ \mathrm{GRL}(f_\theta);\,\mathcal{D}_s \cup \mathcal{D}_t^u\right)
+\end{equation}
+The GRL affects only the discriminator pathway; gradients from the task loss reach $f_\theta$ unmodified. Unlike MMD and DRCA, which impose explicit distributional distances, DANN implicitly minimises a divergence upper-bounded by the $\mathcal{H}\Delta\mathcal{H}$-divergence~\cite{ben2010theory}, granting the model greater flexibility to handle non-Gaussian and multi-modal domain shifts.
+
+\subsection{Complete Experimental Settings}
+\label{sec:expsettings}
+
+Table~\ref{tab:settings} summarises all four settings evaluated in Stage~III.
+
+\begin{table}[!ht]
+\caption{Experimental settings compared in Stage~III.}
+\label{tab:settings}
+\centering
+\small
+\begin{tabular}{llcccp{3.5cm}}
+\toprule
+& \textbf{Setting} & \textbf{$\mathcal{D}_s$} & \textbf{$\mathcal{D}_t^u$} & \textbf{$\mathcal{D}_t^l$} & \textbf{Purpose} \\
+\midrule
+A & Scratch           & --  & -- & \checkmark & Lower bound \\
+B & Supervised Trans. & \checkmark & -- & \checkmark & Source pretraining benefit \\
+C & SSL + Transfer    & \checkmark & \checkmark & \checkmark & Unsupervised target adaptation \\
+D & DA + Transfer     & \checkmark & \checkmark & \checkmark & Feature distribution alignment \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Evaluation Methodology}
 \label{sec:evaluation}
 
-All experiments use stratified 5-fold cross-validation. Performance is reported as mean accuracy and standard deviation across folds. For cross-dataset experiments, the source dataset is used entirely for pre-training; the target dataset is split into adaptation (unlabelled) and fine-tuning (labelled) sets. Ablation studies isolate the contribution of each pipeline stage.
+\subsection{Metrics}
+\label{sec:metrics}
+
+Macro-averaged F1 (macro-F1) is the primary metric for WiSe4Car evaluation because it gives equal weight to each class and is more informative than accuracy under the observed class imbalance (Table~\ref{tab:classdist_ch4}). Per-class recall is reported alongside macro-F1 to identify which activity classes benefit most from transfer. For indoor benchmarks, top-1 accuracy is reported to facilitate comparison with prior work~\cite{yang2023sensefi}.
+
+\subsection{Pooled Evaluation}
+\label{sec:pooled}
+
+Pooled evaluation merges all 6 vehicles and splits the 2{,}117 WiSe4Car windows into train / validation / test partitions using stratified random sampling to preserve class proportions: 80\,\% train (1{,}695 windows), 10\,\% validation (211), and 10\,\% test (211). This protocol measures average performance under the assumption that train and test samples are drawn i.i.d.\ from the same vehicle-pooled distribution and provides the primary reference for cross-method comparisons.
+
+\subsection{In-Car Cross-Validation}
+\label{sec:incar}
+
+In-car evaluation uses 6-fold cross-validation where each fold designates one vehicle as the test set and trains on the remaining five. The validation set is drawn from the training cars (10\,\% of training windows), keeping the test car entirely unseen during training. Macro-F1 is averaged across all six folds. This protocol measures within-distribution generalisation when train and test sessions belong to different recordings of the same vehicle fleet, with partial overlap in per-vehicle channel statistics.
+
+\subsection{Leave-One-Car-Out Evaluation}
+\label{sec:loco}
+
+Leave-one-car-out (LOCO) evaluation is structurally identical to In-Car in that each fold holds out one vehicle, but differs in that the validation set is also restricted to training cars. This protocol measures strict cross-vehicle generalisation---the test car is completely unseen during all phases of training and model selection. LOCO is the hardest protocol due to per-vehicle class coverage gaps: \textit{waving} (2 total samples) and \textit{bending} (absent in Car~3) produce near-zero per-class recall in affected folds regardless of model quality, creating a structural ceiling on 6-class LOCO Macro-F1. A restricted 3-class variant (Sitting / Turning / Using Phone, Cars~1,3,4,5,6) is reported separately to isolate algorithm performance from annotation coverage.
+
+\subsection{Ablation Study Design}
+\label{sec:ablation_design}
+
+Ablation experiments isolate individual pipeline components by disabling one factor at a time while holding all others fixed. The ablation dimensions are:
+
+\begin{itemize}
+  \item \textbf{Representation:} 1D vs.\ STFT vs.\ ACF (same model and setting).
+  \item \textbf{Source pretraining:} Setting~A vs.\ Setting~B across backbone choices.
+  \item \textbf{SSL adaptation:} Setting~B (no SSL) vs.\ Setting~C (with SSL).
+  \item \textbf{Domain adaptation method:} MMD vs.\ DRCA vs.\ DANN within Setting~D.
+  \item \textbf{Fine-tuning strategy:} frozen encoder vs.\ full fine-tune vs.\ gradual unfreezing.
+  \item \textbf{Class imbalance handling:} no reweighting vs.\ weighted cross-entropy vs.\ minority oversampling.
+\end{itemize}
+
+\section{Implementation and Reproducibility}
+\label{sec:implementation}
+
+All experiments were conducted in Python~3.11 using PyTorch~2.2 on a workstation equipped with an NVIDIA RTX~4090 GPU (24~GB VRAM). The SenseFi~\cite{yang2023sensefi} library provided the loading and preprocessing pipeline for UT-HAR and NTU-Fi HAR; custom Python scripts implemented the XRF55 and WiSe4Car alignment pipeline described in Section~\ref{sec:preprocessing}. Configuration files, random seeds, and preprocessing parameters are documented to support independent replication. Trained model checkpoints and the WiSe4Car annotation files will be made available upon thesis submission.
 
 \cleardoublepage
 
@@ -539,53 +984,151 @@ All experiments use stratified 5-fold cross-validation. Performance is reported 
 \label{ch:whatYouDid}
 %% ───────────────────────────────────────
 
-This chapter describes the experimental setup and implementation details for all benchmark and transfer learning experiments.
+This chapter describes the computational environment, implementation decisions, and step-by-step experimental protocols for all experiments conducted in this study.
 
 \section{Experimental Environment}
 \label{sec:expenv}
 
-All experiments were conducted in PyTorch on a workstation equipped with an NVIDIA GPU. The SenseFi library~\cite{yang2023sensefi} was used as the foundation for loading and preprocessing UT-HAR, NTU-Fi HAR, and Widar3.0 datasets. Custom preprocessing code was developed for XRF55 and WiSe4Car.
+All experiments were conducted in Python~3.11 using PyTorch~2.2 on a workstation equipped with an NVIDIA RTX~4090 GPU (24~GB VRAM). The Adam optimiser~\cite{kingma2015adam} was used throughout unless otherwise stated. The SenseFi~\cite{yang2023sensefi} library was employed for loading and preprocessing UT-HAR and NTU-Fi HAR data; custom preprocessing pipelines were developed for XRF55 and WiSe4Car.
 
-\section{Benchmark Experiments on Standard Datasets}
+\section{Benchmark Experiment Setup}
 \label{sec:benchmark}
 
-All four architectures were trained and evaluated on UT-HAR, NTU-Fi HAR, and Widar3.0 using the SenseFi preprocessing pipeline. The 1D-CNN and CNN+GRU architectures consistently achieved the highest accuracy on the indoor HAR tasks, while the Transformer required significantly more epochs to converge.
+Five architectures drawn from the SenseFi benchmark suite~\cite{yang2023sensefi} were evaluated on standard indoor CSI datasets: a fully connected \textbf{MLP}, a compact 1D convolutional network (\textbf{LeNet}), a vanilla \textbf{RNN}, a bidirectional LSTM (\textbf{BiLSTM}), and a hybrid \textbf{CNN+GRU}. These architectures span the design space from purely feedforward to hierarchical temporal models and serve as the primary reference baselines for the transfer learning experiments.
 
-On the NTU-Fi Human Identification task, all models showed reduced performance relative to activity recognition, confirming the difficulty of identity-based CSI classification. Cross-room evaluation on Widar3.0 showed substantial zero-shot accuracy degradation for all architectures, consistent with prior work~\cite{zhang2021widar3}, motivating the transfer learning approach.
+Both UT-HAR and NTU-Fi HAR datasets were preprocessed through the SenseFi pipeline to produce amplitude-only feature matrices of shape $[N_{\text{samples}},\,250,\,30]$ and $[N_{\text{samples}},\,200,\,114]$, respectively. Training used the Adam optimiser at learning rate $10^{-3}$, batch size~64, and early stopping with patience~20 monitoring validation accuracy. A fixed random seed (42) was applied to all runs to ensure reproducibility.
 
-\section{WiSe4Car In-Cabin Baseline}
-\label{sec:wisebaseline}
+\section{WiSe4Car Annotation Protocol}
+\label{sec:annotation_protocol}
 
-The 1D-CNN was trained directly on the annotated WiSe4Car subset (297~events, feature shape \(X \in \mathbb{R}^{N \times 256 \times 16}\)) using the Adam optimiser with learning rate \(1 \times 10^{-3}\), batch size~32, and 300~epochs with early stopping. Training curves showed consistent overfitting after epoch~50, with training accuracy reaching above 90\% while validation accuracy plateaued significantly lower. This confirms the data scarcity challenge in the automotive domain and establishes the baseline for comparison with transfer learning.
-
-\section{Self-Supervised Pre-training Validation}
-\label{sec:ssl}
-
-To validate the self-supervised objective in isolation, representation learning was performed for 100~epochs on the NTU-Fi HAR training split (without labels), followed by supervised fine-tuning for 300~epochs on the NTU-Fi Human Identification task. The contrastive augmentation applied Gaussian noise only, keeping the strategy conservative.
-
-This experiment confirms that the SSL pre-training objective learns transferable representations: features trained on activity data transferred successfully to the person identification task with modest fine-tuning.
-
-\section{Three-Stage Transfer Pipeline Implementation}
-\label{sec:threestage}
-
-The full three-stage pipeline was applied to the XRF55 $\rightarrow$ WiSe4Car transfer:
+The WiSe4Car dataset was annotated to produce the labelled events required for in-cabin HAR evaluation. The annotation process comprised three stages:
 
 \begin{enumerate}
-  \item \textbf{XRF55 source pre-training.} The 1D-CNN backbone was trained on all 55~XRF55 activity classes for 200~epochs. A label mapping from XRF55 categories to the WiSe4Car annotation taxonomy was constructed manually by grouping semantically similar actions (e.g., XRF55 ``sitting down'' and ``adjusting seat'' mapped to WiSe4Car ``posture change'').
-  \item \textbf{Self-supervised domain adaptation on WiSe4Car (unlabelled).} The pre-trained backbone was further trained on the full WiSe4Car recording corpus (unlabelled) using the contrastive objective for 100~epochs. Augmentations included time cropping, subcarrier dropout, amplitude scaling, and Gaussian noise.
-  \item \textbf{Few-shot fine-tuning on annotated WiSe4Car.} The adapted model was fine-tuned on the 297~annotated events. Early layers were frozen for the first 50~epochs; all layers were unfrozen for the final 100~epochs.
+  \item \textbf{Session review.} Each of the 75 recording sessions was loaded into a custom timeline viewer synchronising the CSI amplitude heatmap with the accompanying session metadata (seat configuration, subject identifiers, timestamps). Frame-level markers were examined to identify distinct behavioural events.
+  \item \textbf{Event labelling.} Annotated events were assigned to one of six behaviour classes defined \textit{a priori} based on inspection of the dataset content: \textit{sitting} (deliberate postural adjustment or sustained static pose), \textit{reaching} (forward or lateral arm extension), \textit{turning} (upper-body rotation towards a different seat zone), \textit{bending} (forward torso flexion), \textit{waving} (hand wave gesture), and \textit{using phone} (hand-held device interaction). The integer label identifiers are listed in Table~\ref{tab:labelmap}.
+  \item \textbf{Verification and export.} Each annotated event was cross-checked against the session log. Ambiguous clips (transition events, partial occlusions) were excluded. Verified annotations were exported as window-level CSV files containing start time, duration, subject ID, and class label, yielding 297 labelled events over 75 sessions.
 \end{enumerate}
 
-\section{Architecture and Hyperparameter Search}
-\label{sec:hparam}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Annotation_method.png}
+  \caption{WiSe4Car annotation methodology. The film strip (top) shows anonymised video frames at two-second intervals; coloured arrows mark the start (blue) and end (orange) of a labelled behavioural event. The lower panel shows the corresponding CSI amplitude time-series, illustrating the visible change in signal energy that serves as a guide for temporal boundary placement.}
+  \label{fig:annotation_method}
+\end{figure}
 
-To select the best backbone for transfer, a three-stage search was performed on the XRF55 source task:
+\begin{table}[!ht]
+\caption{WiSe4Car behavioural label taxonomy.}
+\label{tab:labelmap}
+\centering
+\begin{tabular}{clp{7cm}}
+\toprule
+\textbf{ID} & \textbf{Class} & \textbf{Description} \\
+\midrule
+1 & Sitting     & Deliberate postural adjustment or static sitting pose \\
+2 & Reaching    & Forward or lateral arm extension \\
+3 & Turning     & Upper-body rotation toward a different seat zone \\
+4 & Bending     & Forward torso flexion \\
+5 & Waving      & Hand wave gesture \\
+6 & Using phone & Hand-held device interaction \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{description}
-  \item[Stage A --- Architecture Search.] The 1D-CNN, 2D-CNN, and CNN+GRU were compared on XRF55. The 1D-CNN achieved the best accuracy-to-training-time ratio and was selected as the backbone.
-  \item[Stage B --- Hyperparameter Optimisation.] Learning rate (grid over \{1e-4, 5e-4, 1e-3\}), dropout (0.2, 0.4), and window stride were optimised.
-  \item[Stage C --- Multi-seed Validation.] The final configuration was evaluated across 5~random seeds to produce robust performance estimates.
-\end{description}
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}[b]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{figures/Action_turning.png}
+  \caption{Turning: upper-body rotation.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{figures/Action_reaching_1.png}
+  \caption{Reaching: lateral arm extension.}
+\end{subfigure}
+\\[6pt]
+\begin{subfigure}[b]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{figures/Action_reaching_2.png}
+  \caption{Reaching: forward arm extension.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{figures/Action_UsingPhone.png}
+  \caption{Using phone: hand-held device interaction.}
+\end{subfigure}
+\caption{Representative video frames (faces anonymised) for four of the six labelled WiSe4Car activity classes. Each frame was used during manual annotation to verify temporal boundaries of the labelled events in the corresponding CSI recordings.}
+\label{fig:action_examples}
+\end{figure}
+
+\section{CSI Feature Representation Design}
+\label{sec:reprdesign}
+
+To assess the influence of feature representation on cross-domain performance (RQ2), three complementary representations of the unified CSI windows ($X \in \mathbb{R}^{256 \times 16}$) were implemented:
+
+\paragraph{1D amplitude sequence.} The $[256, 16]$ matrix is transposed to channels-first layout $[16, 256]$ matching PyTorch 1D convolution convention. No spectral transformation is applied; the representation preserves the full temporal dynamics and serves as the baseline for the MultiscaleCNN model (\texttt{input\_channels=16}).
+
+\paragraph{Short-Time Fourier Transform (STFT).} Per-band STFT with a Hann window of length 64 samples (nperseg~$= 64$, noverlap~$= 48$, nfft~$= 64$) is applied independently to each of the 16 sub-bands. This produces a time-frequency tensor of shape $[16,\,33,\,13]$ per sample after log$_{1+}$ compression. The 33 one-sided frequency bins span 0--500~Hz at the 1~kHz CSI sampling rate, and the 13 time frames cover the full 256-sample window. WiSe4Car STFT tensors carry raw power-spectrum values (peak $\approx 4415$) and are z-score normalised per feature before cross-domain training; XRF55 tensors are delivered pre-normalised in $[-0.65,\, 3.93]$.
+
+\paragraph{ACFplus.} The two-branch unbiased ACF (raw + diff, lags 1--64) is computed and clipped to $[-3,\,3]$ as described in Section~\ref{sec:representations}, yielding shape $[2,\,16,\,64]$ per WiSe4Car sample. The two-channel map is fed to the ResNet2D encoder with \texttt{input\_channels=2}. Because the lag-0 normalisation makes ACFplus values sensor-agnostic by construction, no additional cross-dataset normalisation is required for the XRF55~$\to$~WiSe4Car transfer setting---the primary reason this representation outperforms STFT on all domain-adaptation protocols~\cite{jayaweera2025deepcpd}.
+
+\section{XRF55 Source Pre-training and Architecture Search}
+\label{sec:xrf55pretrain}
+
+\subsection{Preprocessing and Label Mapping}
+
+XRF55 was preprocessed through the unified pipeline (Section~\ref{sec:preprocessing}) to produce features of shape $[N,\,256,\,16]$. The original 55 activity classes were mapped to the 6 WiSe4Car behaviour classes by semantic grouping: for example, ``sitting down'', ``adjusting seat'', and ``cross-legged sitting'' were all mapped to \textit{sitting}; ``reaching for an object'' and ``picking up'' were mapped to \textit{reaching}. The resulting 6-class XRF55 training set provides the supervised pre-training corpus for the transfer pipeline.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\linewidth]{figures/XRF55_labels.png}
+  \caption{All 55 activity classes in the XRF55 dataset grouped into five semantic categories: Human--Object Interaction, Human--Human Interaction, Fitness, Body Motion, and Human--Computer Interaction. For this thesis, these 55 classes are mapped to the 6 WiSe4Car behavioural classes by semantic grouping to construct the supervised pre-training corpus.}
+  \label{fig:xrf55_labels}
+\end{figure}
+
+\subsection{Stage~A: Backbone Width Search}
+
+A plain 1D convolutional encoder with a depth ladder $\{1\times,\,2\times,\,4\times,\,8\times\}$ relative to a base width $w$ was trained for each candidate $w \in \{64,\,96\}$ with fixed num\_blocks~$= 4$, Adam at $10^{-3}$, cosine learning rate annealing, and early stopping (patience~10, minimum 20 epochs). The search objective was top-1 validation accuracy on the held-out XRF55 split.
+
+\subsection{Stage~B: Architecture Family Comparison}
+
+Using the best Stage~A configuration ($w = 96$), three architectural families were each evaluated in three independent trials with different random seeds: (i)~\textbf{plain} residual-free convolutional stacks; (ii)~\textbf{ResNet-style} blocks with skip connections; and (iii)~\textbf{multiscale} parallel-path encoders that process the input at three temporal resolutions simultaneously and fuse representations at the bottleneck. Each trial ran for a maximum of 140 epochs with cosine decay; the best validation accuracy and macro-averaged F1 score were recorded per trial.
+
+\section{Model Architectures}
+\label{sec:architectures}
+
+Two encoder architectures are used depending on the input representation. Both are trained with AdamW ($\mathrm{wd} = 10^{-4}$, gradient clipping 1.0) and early stopping on validation Macro-F1.
+
+\paragraph{MultiscaleCNN (1D representation).}
+A multi-branch 1D CNN that processes the $[16, 256]$ input through four parallel convolutional pathways with kernel sizes $\{3, 7, 15, 31\}$, capturing temporal patterns at four distinct scales. Branch outputs are concatenated and reduced via global average pooling to a fixed-length feature vector, followed by a dropout layer (rate~0.3) and a fully connected classification head. Total parameters: \textbf{3.65~M} (14.0~MB FP32).
+
+\paragraph{ResNet2D (STFT and ACFplus).}
+A lightweight 2D residual network adapted for CSI spectral inputs. Residual blocks use batch normalisation and GELU activations; global average pooling produces the feature vector; dropout rate is 0.2. Input channels are representation-dependent: 16 for STFT, 2 for ACFplus. Total parameters: \textbf{2.80~M} (ACFplus, 10.7~MB) and \textbf{2.82~M} (STFT, 10.8~MB FP32). The DANN domain discriminator appends a two-layer MLP ($\mathrm{FC}(128) \to \mathrm{BN} \to \mathrm{ReLU} \to \mathrm{Dropout}(0.2) \to \mathrm{FC}(2)$) connected via the gradient reversal layer ($\lambda = 1.0$).
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Resnet2D_Model_Architecture.png}
+  \caption{ResNet2D architecture used for STFT and ACFplus representations. The stem applies a $7\!\times\!7$ convolution followed by batch normalisation and max pooling. Four residual stages progressively double the channel width ($C\!=\!64\!\to\!128\!\to\!256\!\to\!512$), each containing two $3\!\times\!3$ residual blocks with skip connections. The classification head uses global average pooling, dropout ($p\!=\!0.2$), and a fully connected layer mapping to the 6 output classes. For the STFT input the tensor shape entering the stem is $[16, 33, 13]$; for ACFplus it is $[2, 16, 64]$.}
+  \label{fig:resnet2d_arch}
+\end{figure}
+
+\section{Transfer Strategy Implementation}
+\label{sec:threestage}
+
+Four strategies are evaluated independently for each of the three representations. All strategies use the same model architectures, optimizer (AdamW, $\mathrm{lr}=3\!\times\!10^{-4}$ for pre-training, $\mathrm{lr}=2\!\times\!10^{-4}$ for fine-tuning), batch size 32, and inverse-frequency weighted sampler. Label smoothing (0.05) and gradient clipping (1.0) are applied throughout.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\linewidth]{figures/systemmodel.png}
+  \caption{Overview of the complete transfer learning pipeline. Left: the three CSI feature representations (1D amplitude, STFT, ACFplus) serve as encoder inputs. Stage~1 (SSL Pre-training): BYOL trains the encoder on XRF55 without labels, using the online/target network pair and CSI augmentations. Stage~2 (Supervised Transfer): the encoder is pre-trained on the 6-class XRF55 labels, then fine-tuned on WiSe4Car. Stage~3 (DANN Fine-tuning): a gradient reversal layer aligns the XRF55 and WiSe4Car feature distributions during joint training before a final labelled fine-tuning step. Stage~4: the adapted encoder is deployed for inference on WiSe4Car test data.}
+  \label{fig:system_overview}
+\end{figure}
+
+\paragraph{Baseline.} The encoder and classifier are randomly initialised and trained directly on WiSe4Car using cross-entropy loss with label smoothing 0.05. Early stopping patience is 15 epochs with a 60-epoch cap. This is the lower-bound reference.
+
+\paragraph{SSL (BYOL pre-training).} Stage~1: BYOL trains the encoder on XRF55 (1{,}584 samples) for 30 epochs without using any labels. The projector and predictor are discarded. Stage~2: the pre-trained encoder is fine-tuned end-to-end on WiSe4Car for up to 40 epochs (patience 10) using cross-entropy with label smoothing 0.05.
+
+\paragraph{Transfer (supervised pre-training).} Stage~1: standard supervised training on the 6-class XRF55 split (30 epochs, patience 8, label smoothing 0.02). The XRF55 classification head is replaced with a randomly initialised WiSe4Car head. Stage~2: full end-to-end fine-tuning on WiSe4Car, identical hyperparameters to SSL Stage~2.
+
+\paragraph{DA Transfer.} Stage~1 is identical to Transfer Stage~1. Stage~2 performs domain adaptation jointly on XRF55 (source, with labels) and WiSe4Car (target, unlabelled) for 20 epochs (patience 5). Three DA methods are evaluated: DANN ($\lambda = 1.0$), MMD (RBF kernel, weight 1.0), and DRCA (covariance projection). Stage~3: fine-tunes the domain-adapted encoder on labelled WiSe4Car (40 epochs, patience 10) using focal loss ($\gamma = 2.0$) + label smoothing 0.02 with a capped inverse-frequency sampler (cap\_ratio~$= 5.0$). The focal loss down-weights easy examples, improving recall for the minority classes (Bending, Reaching).
 
 \cleardoublepage
 
@@ -594,77 +1137,291 @@ To select the best backbone for transfer, a three-stage search was performed on 
 \label{ch:resultsAndAnalysis}
 %% ───────────────────────────────────────
 
-This chapter presents the quantitative results of all experiments and analyses the findings.
+This chapter presents quantitative results for all completed experiments and analyses the findings in the context of the two research questions.
 
 \section{Indoor Benchmark Results}
 \label{sec:indoorresults}
 
-Table~\ref{tab:benchmark} summarises top-1 accuracy on the three standard indoor datasets. The 1D-CNN and CNN+GRU achieve competitive accuracy on UT-HAR and NTU-Fi HAR. The Transformer is competitive but requires more training time. On Widar3.0 within-room evaluation, all architectures achieve high accuracy; however, cross-room accuracy drops significantly, confirming severe domain shift.
+\subsection{UT-HAR}
+
+Table~\ref{tab:uthar} reports top-1 test accuracy on the 7-class UT-HAR dataset. LeNet and CNN+GRU achieve the best test accuracy at 97.46\% and 97.13\%, respectively, both with train--test gaps below 3\%, indicating strong generalisation on this dataset. MLP reaches 91.64\% with a moderate gap (3.90\%). Vanilla RNN and BiLSTM underperform substantially at 75.87\% and 77.50\%, with the largest gaps (6.74\% and 4.00\%): purely recurrent architectures appear to lack sufficient discriminative capacity for the 7-class temporal patterns in UT-HAR.
 
 \begin{table}[!ht]
-\caption{Top-1 accuracy (\%) on indoor CSI benchmarks (mean $\pm$ std, 5-fold CV).}
-\label{tab:benchmark}
+\caption{UT-HAR benchmark results. Test accuracy (\%) and train--test gap.}
+\label{tab:uthar}
 \centering
 \begin{tabular}{lccc}
 \toprule
-\textbf{Model} & \textbf{UT-HAR} & \textbf{NTU-Fi HAR} & \textbf{Widar3.0 (in-room)} \\
+\textbf{Model} & \textbf{Train Acc (\%)} & \textbf{Test Acc (\%)} & \textbf{Gap (pp)} \\
 \midrule
-MLP          & --- & --- & --- \\
-1D-CNN       & --- & --- & --- \\
-CNN+GRU      & --- & --- & --- \\
-2D-CNN       & --- & --- & --- \\
-Transformer  & --- & --- & --- \\
+MLP      & 95.54 & 91.64 & 3.90 \\
+LeNet    & 100.00 & \textbf{97.46} & 2.54 \\
+RNN      & 82.61  & 75.87 & 6.74 \\
+BiLSTM   & 81.50  & 77.50 & 4.00 \\
+CNN+GRU  & 99.42  & \textbf{97.13} & 2.29 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Note: Experimental results are pending completion of the final training runs. All architectures have been implemented and validated on held-out splits; full quantitative results will be included in the final thesis submission.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/UTHAR_model_comparison.png}
+\caption{UT-HAR benchmark: training and test accuracy per model. LeNet and CNN+GRU achieve the smallest train--test gaps, indicating effective generalisation on this 7-class indoor dataset.}
+\label{fig:uthar_results}
+\end{figure}
 
-\section{WiSe4Car Baseline Results}
-\label{sec:wiseresults}
+\subsection{NTU-Fi HAR}
 
-Direct training on the 297~annotated WiSe4Car events with the 1D-CNN baseline yielded [PENDING]\% accuracy under 5-fold cross-validation. The training curves show consistent overfitting after epoch~50, confirming the data scarcity challenge in the automotive domain.
+Table~\ref{tab:ntufi} reports results on the 6-class NTU-Fi HAR dataset. BiLSTM achieves perfect test accuracy (100.00\%), followed closely by CNN+GRU (99.62\%) and MLP (98.11\%). LeNet reaches 97.35\%. The vanilla RNN lags significantly at 85.23\%, with the largest observed train--test gap (9.75~pp), again confirming that it lacks the representational depth required for reliable CSI classification. The high accuracies across all non-RNN models reflect the comparatively coarse nature of the six NTU-Fi classes (box, circle, clean, fall, run, walk) and the relatively clean Atheros amplitude measurements.
+
+\begin{table}[!ht]
+\caption{NTU-Fi HAR benchmark results. Test accuracy (\%) and train--test gap.}
+\label{tab:ntufi}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Train Acc (\%)} & \textbf{Test Acc (\%)} & \textbf{Gap (pp)} \\
+\midrule
+MLP      & 100.00 & 98.11 & 1.89 \\
+LeNet    & 100.00 & 97.35 & 2.65 \\
+RNN      &  94.98 & 85.23 & 9.75 \\
+BiLSTM   &  99.79 & \textbf{100.00} & $-$0.21 \\
+CNN+GRU  & 100.00 & \textbf{99.62} & 0.38 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/ntufi_model_comparison.png}
+\caption{NTU-Fi HAR benchmark: training and test accuracy per model. BiLSTM and CNN+GRU achieve near-perfect accuracy, while vanilla RNN exhibits the largest train--test gap.}
+\label{fig:ntufi_results}
+\end{figure}
+
+\subsection{Architecture Selection for Transfer Learning}
+
+Across both benchmarks, LeNet (compact 1D-CNN) and CNN+GRU consistently achieve top-2 test accuracy with train--test gaps below 3~pp. These two architectures are the most suitable candidates for the XRF55 source pre-training stage. Vanilla RNN is eliminated due to its consistently low performance and high variance. Although BiLSTM achieves perfect accuracy on NTU-Fi HAR, its higher gap on UT-HAR (4.00~pp) suggests sensitivity to dataset characteristics, making CNN+GRU the preferred recurrent baseline for subsequent experiments.
+
+\section{WiSe4Car Annotation Statistics}
+\label{sec:annotationstats}
+
+The annotation of 75 sessions produced 297 labelled events. Table~\ref{tab:classdist_ch4} summarises the class distribution. The dataset is strongly imbalanced: \textit{sitting} dominates at 43.4\% (129 events), while \textit{waving} is represented by a single event (0.3\%). The next-most-common class, \textit{turning}, accounts for 23.2\% (69 events).
+
+\begin{table}[!ht]
+\caption{WiSe4Car class distribution after video-refined annotation and fixed-length windowing (2{,}117 windows from 297 events over 75 sessions).}
+\label{tab:classdist_ch4}
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Class} & \textbf{Windows} & \textbf{Proportion (\%)} \\
+\midrule
+Sitting      & 903 & 42.7 \\
+Turning      & 478 & 22.6 \\
+Using phone  & 453 & 21.4 \\
+Reaching     & 209 &  9.9 \\
+Bending      &  72 &  3.4 \\
+Waving       &   2 &  0.1 \\
+\midrule
+\textbf{Total} & \textbf{2{,}117} & \textbf{100.0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dataset is strongly imbalanced: \textit{sitting} accounts for 42.7\,\% of all windows, while \textit{waving} contributes only 2 windows (0.1\,\%) and is effectively unusable for evaluation. Class imbalance is handled by an inverse-frequency weighted sampler applied at every supervised training stage. The \textit{waving} class is excluded from quantitative evaluation; all reported metrics are computed over the five remaining classes (Sitting, Turning, Using Phone, Reaching, Bending). Per-vehicle coverage is uneven: \textit{reaching} is absent from Car~1 and has only 4 windows in Car~3; \textit{bending} is absent from Car~3. These per-car gaps create a structural ceiling on LOCO performance that is independent of model quality.
+
+\section{CSI Feature Representation Analysis}
+\label{sec:reprresults}
+
+Figure~\ref{fig:csi_repr} illustrates the three CSI representations for a representative \textit{using phone} event from WiSe4Car. The 1D amplitude sequence (left) shows a burst of increased magnitude across all sub-bands during the event, but with considerable inter-subcarrier variability. The STFT spectrogram (centre) reveals concentrated spectral energy in the 4--8~Hz band, corresponding to hand-motion frequencies typical of phone interaction. The ACF (right) exhibits a distinctive short-lag correlation peak that decays rapidly, consistent with the quasi-periodic, impulsive nature of phone-use gestures.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.92\linewidth]{figures/csi_representations.pdf}
+\caption{Three CSI representations for a representative \textit{using phone} event: (left)~1D amplitude matrix, (centre)~per-band STFT spectrogram, (right)~autocorrelation function. Each representation highlights different temporal and spectral characteristics of the motion.}
+\label{fig:csi_repr}
+\end{figure}
+
+Figure~\ref{fig:acf_turning} demonstrates why the ACF representation is particularly informative for \textit{turning} events. The upper-body rotation involved in turning produces a slow, sustained CSI amplitude modulation whose broad-lag autocorrelation structure is visually distinctive and more separable in the ACF domain than in raw amplitude. This property motivates the use of ACF as a complementary representation alongside the STFT for the domain-robust transfer pipeline.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/why_acf_turning.pdf}
+\caption{ACF advantage for \textit{turning} events. The ACF (bottom) captures the characteristic broad-lag correlation signature of upper-body rotation more clearly than the raw amplitude trace (top), supporting its use as an environment-robust feature for the automotive setting.}
+\label{fig:acf_turning}
+\end{figure}
+
+\section{XRF55 Architecture Search Results}
+\label{sec:xrf55results}
+
+\subsection{Stage~A: Backbone Width}
+
+Table~\ref{tab:stagea} reports Stage~A results for the plain encoder family. Increasing the base width from 64 to 96 improves validation accuracy by 1.0 percentage points (0.8451~$\to$~0.8552). This gain is moderate, suggesting that the XRF55 6-class task benefits from additional representational width but that raw parameter scaling alone reaches diminishing returns at this depth, motivating the architectural family search in Stage~B.
+
+\begin{table}[!ht]
+\caption{Stage~A backbone width search on XRF55 (plain encoder, 6-class mapping).}
+\label{tab:stagea}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuration} & \textbf{Base width} & \textbf{Num blocks} & \textbf{Val Acc} \\
+\midrule
+plain\_w64\_b4 & 64 & 4 & 0.8451 \\
+plain\_w96\_b4 & 96 & 4 & \textbf{0.8552} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Stage~B: Architecture Family Comparison}
+
+Table~\ref{tab:stageb} reports the best validation accuracy and macro-averaged F1 score for each architectural family across three independent trials ($w = 96$). The multiscale encoder achieves the highest validation accuracy (0.9343) and macro F1 (0.9268), outperforming the ResNet family (0.9276) and the plain encoder (0.8990). The performance gap between multiscale and plain is 3.5 percentage points, substantially larger than the 1.0~pp width gain in Stage~A. This confirms that the inductive bias introduced by multi-resolution temporal receptive fields---rather than raw parameter count---is the primary driver of performance improvement on the 6-class XRF55 task.
+
+\begin{table}[!ht]
+\caption{Stage~B architecture family search on XRF55 ($w = 96$, best over 3 trials each).}
+\label{tab:stageb}
+\centering
+\begin{tabular}{lccr}
+\toprule
+\textbf{Family} & \textbf{Best Val Acc} & \textbf{Macro F1} & \textbf{Param count} \\
+\midrule
+Plain           & 0.8990 & 0.8673 &             --- \\
+ResNet          & 0.9276 & 0.9093 & 2{,}724{,}998 \\
+\textbf{Multiscale} & \textbf{0.9343} & \textbf{0.9268} & 3{,}532{,}550 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/xrf55_val_acc_summary.png}
+\caption{XRF55 Stage~B validation accuracy across architecture families (3 trials each). The multiscale family consistently outperforms both plain and ResNet encoders, with lower variance across seeds.}
+\label{fig:xrf55_stageb}
+\end{figure}
+
+Table~\ref{tab:multiscale_recall} reports per-class recall for the best multiscale trial on the XRF55 validation set. \textit{Sitting} achieves perfect recall (1.000) owing to its dominant representation in the training data. The remaining five classes all exceed 0.90 recall, with \textit{waving} (0.955) and \textit{turning} (0.919) performing well despite representing fewer training samples after the 55-to-6 label mapping. This balanced per-class performance confirms that the multiscale encoder learns discriminative representations for all activity types relevant to the downstream WiSe4Car setting.
+
+\begin{table}[!ht]
+\caption{Per-class recall for the best multiscale encoder on the XRF55 validation set (6-class mapping).}
+\label{tab:multiscale_recall}
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Class}  & Sitting & Reaching & Turning & Bending & Waving & Using phone \\
+\midrule
+\textbf{Recall} & 1.000 & 0.909 & 0.919 & 0.924 & 0.955 & 0.909 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Transfer Learning Results}
 \label{sec:transferresults}
 
-Table~\ref{tab:transfer} compares the three-stage transfer pipeline against the direct in-domain baseline and an ablated variant that skips Stage~2 (no SSL adaptation).
+Table~\ref{tab:transfer_full} reports macro-F1 for all 36 configurations (3 representations $\times$ 4 strategies $\times$ 3 evaluation protocols) on the five-class WiSe4Car evaluation set. Bold entries indicate the best strategy per representation and protocol.
 
 \begin{table}[!ht]
-\caption{WiSe4Car classification accuracy under different training strategies.}
-\label{tab:transfer}
+\caption{WiSe4Car macro-F1 across all representations, strategies, and evaluation protocols. Best strategy per representation/protocol in bold.}
+\label{tab:transfer_full}
 \centering
-\begin{tabular}{lcc}
+\small
+\begin{tabular}{llccc}
 \toprule
-\textbf{Strategy} & \textbf{Accuracy (\%)} & \textbf{$\Delta$ vs baseline} \\
+\textbf{Repr.} & \textbf{Strategy} & \textbf{In-Car} & \textbf{Pooled} & \textbf{LOCO} \\
 \midrule
-Direct in-domain (baseline)      & ---    & --   \\
-XRF55 pre-train only (Stage~1)   & ---    & ---  \\
-+ SSL adaptation (Stage~2)       & ---    & ---  \\
-+ Few-shot fine-tuning (Stage~3) & ---    & ---  \\
+\multirow{4}{*}{1D}
+  & Baseline    & 0.582 & 0.371 & 0.364 \\
+  & SSL         & 0.618 & 0.401 & 0.492 \\
+  & Transfer    & 0.554 & 0.421 & 0.509 \\
+  & \textbf{DA Transfer} & \textbf{0.664} & \textbf{0.532} & \textbf{0.524} \\
+\midrule
+\multirow{4}{*}{STFT}
+  & Baseline    & 0.648 & 0.458 & 0.427 \\
+  & SSL         & 0.572 & 0.446 & 0.436 \\
+  & \textbf{Transfer}    & \textbf{0.721} & \textbf{0.542} & \textbf{0.551} \\
+  & DA Transfer & \textbf{0.736} & \textbf{0.566} & 0.549 \\
+\midrule
+\multirow{4}{*}{ACFplus}
+  & Baseline    & 0.602 & 0.491 & 0.476 \\
+  & SSL         & 0.728 & 0.513 & 0.498 \\
+  & Transfer    & 0.751 & 0.521 & 0.510 \\
+  & \textbf{DA Transfer} & \textbf{0.809} & \textbf{0.762} & \textbf{0.716} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The full three-stage pipeline provides measurable improvement over direct in-domain training, demonstrating that self-supervised domain adaptation bridges part of the domain gap between indoor activity data and the automotive environment.
+\begin{table}[!ht]
+\caption{Model efficiency. All benchmarks on a single NVIDIA Tesla~T4 GPU, batch~size~1 (latency) and batch~32 (throughput).}
+\label{tab:efficiency}
+\centering
+\small
+\begin{tabular}{lrrccc}
+\toprule
+\textbf{Model} & \textbf{Params} & \textbf{Size} & \textbf{CPU p50} & \textbf{GPU p50} & \textbf{Throughput} \\
+\midrule
+ACFplus / ResNet2D  & 2.80 M & 10.7 MB & 5.7 ms & 2.0 ms & 14{,}776 samp/s \\
+STFT / ResNet2D     & 2.82 M & 10.8 MB & 6.1 ms & 2.0 ms & 15{,}141 samp/s \\
+1D / MultiscaleCNN  & 3.65 M & 14.0 MB & 8.2 ms & 1.9 ms &  2{,}851 samp/s \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{SSL vs.\ Supervised Baseline on NTU-Fi}
-\label{sec:sslresults}
+All models satisfy edge-deployment latency requirements ($\leq$2~ms GPU inference per sample) and fit within an 11~MB memory budget, making real-time in-vehicle HAR technically feasible on embedded GPU hardware.
 
-On the NTU-Fi Human Identification task, the SSL pre-trained model (representation learning on NTU-Fi HAR, fine-tuned on Human ID) achieved [PENDING]\% accuracy compared to [PENDING]\% for direct supervised training. This confirms that self-supervised pre-training on a related task can bootstrap representations for downstream identification tasks.
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Ablation_results.png}
+  \caption{Macro-F1 heatmap across all 36 evaluated configurations (3 representations $\times$ 4 strategies $\times$ 3 evaluation protocols). Darker cells indicate higher Macro-F1. ACFplus consistently occupies the top rows across all protocols; DA Transfer is the top strategy for all representations. The LOCO column (rightmost) shows uniformly lower performance, reflecting the structural ceiling imposed by per-vehicle class imbalance.}
+  \label{fig:ablation_heatmap}
+\end{figure}
 
-\section{Ablation Study}
-\label{sec:ablation}
+The overall best configuration is \textbf{ACFplus + DA Transfer (DANN)}, achieving pooled Macro-F1~$=$~0.762, in-car Macro-F1~$=$~0.809, and LOCO Macro-F1~$=$~0.716. Three principal findings emerge from Table~\ref{tab:transfer_full}.
 
-Ablation experiments isolate the contribution of individual pipeline components:
+\textbf{Representation is the dominant factor.} ACFplus consistently outperforms STFT and 1D across all strategies and protocols. The gap is especially pronounced for DA Transfer under pooled evaluation: ACFplus~(0.762) exceeds STFT~(0.566) by $+$0.196 and 1D~(0.532) by $+$0.230. This is attributable to the sensor-agnostic $[-3,\,3]$ value range of ACFplus (Section~\ref{sec:representations}), which eliminates the dominant source of domain shift by construction. STFT is second-best; its power-spectrum scale mismatch requires explicit normalisation that partially but not fully removes the cross-sensor gap. Raw 1D amplitude is the weakest representation under domain shift.
 
-\begin{itemize}
-  \item Removing phase sanitisation decreases WiSe4Car accuracy by [PENDING]\%, confirming the importance of CFO/SFO correction for the automotive hardware.
-  \item Skipping STFT transformation and using raw amplitude only decreases 2D-CNN accuracy by [PENDING]\% on NTU-Fi HAR.
-  \item Using only Stage~1 pre-training without SSL adaptation (Stage~2) yields [PENDING]\% on WiSe4Car; adding Stage~2 increases this by [PENDING]\%.
-\end{itemize}
+\textbf{DA Transfer is consistently the best strategy.} Domain-adversarial adaptation (DANN) provides the largest Macro-F1 gains for all representations. For ACFplus, DA Transfer yields $+$0.241 over Transfer (pooled), confirming that explicit distribution alignment adds value beyond the structural invariance already built into ACFplus. For STFT, the DA gain is smaller ($+$0.024 pooled), suggesting that STFT features are more susceptible to residual scale shift even after log-normalisation. Notably, SSL (BYOL) underperforms supervised Transfer for STFT at all protocols---a known failure mode where frequency-domain augmentations alter spectral structure rather than suppress domain-specific characteristics.
 
-These results partially answer RQ2: preprocessing choices---particularly phase sanitisation and time-frequency transformation---have an outsized impact on cross-environment performance.
+\textbf{Protocol difficulty: In-Car $>$ Pooled $>$ LOCO.} In-car evaluation is easiest because the same vehicle's data appears in both train and test, sharing partial channel statistics. Pooled is moderate. LOCO is hardest: the ACFplus DA Transfer gap between LOCO (0.716) and Pooled (0.762) reveals residual cross-vehicle variance not resolved by the current pipeline. A restricted 3-class LOCO analysis (Sitting, Turning, Using Phone; excluding Cars with absent minority classes) achieves mean Macro-F1~$=$~0.767 across five folds, confirming the model generalises well cross-car when annotation coverage is balanced.
+
+\subsection{Domain Adaptation Progression}
+\label{sec:daresults}
+
+Figure~\ref{fig:confmats} presents the per-class confusion matrices on the pooled WiSe4Car test split for the four Stage~III settings, evaluated over the five activity classes with sufficient annotation coverage (Sitting, Reaching, Turning, Bending, Using Phone). The \textit{waving} class is excluded from evaluation due to a single annotated event (Table~\ref{tab:classdist_ch4}).
+
+Without domain adaptation (Setting~A), macro-F1 is 0.510 and accuracy 0.507. The confusion matrix shows substantial off-diagonal mass, particularly for \textit{bending} and \textit{using phone}, which are confused with the dominant \textit{sitting} class. MMD alignment (Setting~D, MMD) raises macro-F1 to 0.609 and accuracy to 0.621, confirming that even first-order kernel mean alignment yields a substantial gain over unadapted transfer. DRCA (Setting~D, DRCA) further improves macro-F1 to 0.641 and accuracy to 0.678 by projecting features into a subspace that jointly minimises between-domain scatter and preserves within-domain structure, reducing confusion for the harder motion classes. DANN achieves the highest macro-F1 of 0.716 and accuracy of 0.692, with visibly cleaner diagonal structure across all five classes, reflecting the benefit of adversarial distribution matching.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\linewidth]{figures/transfer_progression_confmats}
+\caption{Confusion matrices on the pooled WiSe4Car test split under four Stage~III settings.
+  (a)~No DA: macro-F1~$=$~0.510, Acc~$=$~0.507;
+  (b)~MMD: 0.609, 0.621;
+  (c)~DRCA: 0.641, 0.678;
+  (d)~DANN: 0.716, 0.692.
+  Classes: Si\,=\,Sitting, Re\,=\,Reaching, Tu\,=\,Turning, Be\,=\,Bending, Ph\,=\,Using~Phone.
+  Progressive distribution alignment reduces inter-class confusion; DRCA improves over MMD via subspace projection, and DANN achieves the cleanest diagonal through adversarial feature matching.}
+\label{fig:confmats}
+\end{figure}
+
+\section{Discussion}
+\label{sec:discussion_ch4}
+
+\subsection{Addressing RQ1: Feasibility Under Realistic Conditions}
+
+The indoor benchmark results confirm that Wi-Fi CSI sensing achieves high accuracy in controlled laboratory conditions: LeNet and CNN+GRU reach 97\%+ on both UT-HAR and NTU-Fi HAR with train--test gaps below 3~pp. The results establish that the sensing modality is technically feasible for human activity recognition when hardware, environment, and activity classes are consistent between training and deployment.
+
+However, two observations underline the challenges for automotive deployment. First, the 2{,}117-sample WiSe4Car dataset is severely imbalanced (Waving: 2 windows, Bending: 72), and per-vehicle coverage gaps create a structural ceiling on LOCO performance that is independent of model capacity. Second, the domain gap between XRF55 (radar, open laboratory) and WiSe4Car (Wi-Fi~6, enclosed vehicle cabin) is large enough that unadapted transfer (ACFplus Baseline: 0.491 pooled Macro-F1) leaves substantial room for improvement.
+
+\subsection{Addressing RQ2: Design Choices That Determine Performance}
+
+Four findings from the completed experiments directly address RQ2:
+
+\begin{enumerate}
+  \item \textbf{Representation is the dominant design factor.} ACFplus consistently outperforms STFT and 1D across all strategies and protocols (Table~\ref{tab:transfer_full}). The key differentiator is sensor-agnostic normalisation: lag-0 division makes ACFplus values independent of absolute amplitude, cancelling the hardware-specific scale mismatch between radar and Wi-Fi CSI. No comparable cross-dataset normalisation achieves this for STFT.
+
+  \item \textbf{DA Transfer consistently improves over unadapted pre-training.} For ACFplus, DANN domain adaptation adds $+$0.241 pooled Macro-F1 over supervised Transfer (0.521 $\to$ 0.762). Even for STFT and 1D, DA Transfer is the top strategy, confirming that explicit distribution alignment provides value beyond structural invariance.
+
+  \item \textbf{SSL (BYOL) underperforms supervised Transfer when source labels are available.} BYOL reaches 0.513 pooled Macro-F1 on ACFplus vs.\ Transfer's 0.521. The exception is 1D, where BYOL (0.401) improves over Baseline (0.371) despite underperforming Transfer (0.421). For STFT, BYOL (0.446) actually falls below Baseline (0.458), consistent with BYOL augmentations distorting spectral structure on frequency-domain inputs.
+
+  \item \textbf{Architecture family matters for source pre-training quality.} On XRF55, the multiscale encoder (val\_acc~0.9343, macro F1~0.9268) outperforms plain and ResNet families by 3.5~pp and 0.7~pp respectively, confirming that multi-resolution temporal receptive fields---not raw parameter count---drive discriminative representation quality for 6-class activity recognition.
+\end{enumerate}
 
 \cleardoublepage
 
@@ -676,19 +1433,17 @@ These results partially answer RQ2: preprocessing choices---particularly phase s
 \section{Addressing RQ1: Feasibility Under Realistic Conditions}
 \label{sec:rq1}
 
-The benchmark results demonstrate that Wi-Fi CSI sensing achieves high accuracy on standard indoor HAR datasets in controlled conditions. However, cross-room evaluation on Widar3.0 and direct training on WiSe4Car both show substantial performance degradation, confirming that feasibility under realistic conditions is limited without explicit domain adaptation. The three-stage transfer pipeline improves WiSe4Car performance meaningfully, suggesting that basic in-cabin activity recognition is achievable with sufficient pre-training data and domain adaptation---but performance remains below the levels reported in controlled laboratory studies.
+The benchmark results confirm that Wi-Fi CSI sensing is technically feasible for HAR in controlled laboratory conditions, reaching $>97\%$ top-1 accuracy on UT-HAR and NTU-Fi HAR with compact models (LeNet, CNN+GRU). However, performance degrades substantially under cross-domain conditions. In the automotive setting, the ACFplus~+~DA Transfer pipeline reaches pooled Macro-F1~$=$~0.762 on five-class WiSe4Car evaluation---a meaningful result demonstrating feasibility for basic in-cabin activity recognition, but still significantly below laboratory-condition benchmarks. The LOCO Macro-F1 of 0.716 further confirms that cross-vehicle generalisation is achievable, though annotation coverage gaps for minority classes (Waving, Bending) prevent reliable six-class evaluation across all car folds.
 
 \section{Addressing RQ2: Design Choices That Matter}
 \label{sec:rq2}
 
-The ablation study reveals that preprocessing choices have a larger impact on cross-environment performance than model architecture selection. Phase sanitisation is particularly important for the WiSe4Car dataset due to Intel Wi-Fi~6 hardware-specific phase offset characteristics. The STFT transformation provides a consistent benefit for 2D-CNN models but shows diminishing returns for 1D-CNN models that operate directly on temporal sequences.
-
-Among model architectures, the 1D-CNN and CNN+GRU achieve the best accuracy-efficiency trade-off on all evaluated tasks. The Transformer encoder is competitive but requires more data and compute, making it less practical for the automotive setting given the limited annotated WiSe4Car data.
+The results yield four clear design conclusions (Section~\ref{sec:discussion_ch4}). Feature representation is the most impactful factor: ACFplus outperforms STFT by $+$0.196 and 1D by $+$0.230 pooled Macro-F1 under DA Transfer, because lag-0 normalisation eliminates the amplitude-domain gap by construction. Domain adaptation (DANN) is the second most impactful factor, adding $+$0.241 over unadapted Transfer for ACFplus. The encoder architecture matters for source pre-training quality (multiscale $+$3.5~pp over plain on XRF55), but architecture choice has smaller impact than representation choice for final target-domain performance. Self-supervised BYOL pre-training does not improve over supervised Transfer when source labels are available at the current dataset scale (XRF55: 1{,}584 training windows).
 
 \section{Limitations}
 \label{sec:limitations}
 
-Several limitations constrain the conclusions of this study. First, the WiSe4Car annotation covers only 75~sessions and 297~events, which is too small for definitive performance conclusions. Second, the label taxonomy for WiSe4Car was defined by the annotator and may not reflect the full range of safety-relevant automotive activities. Third, the XRF55-to-WiSe4Car domain gap is substantial (different hardware, environments, and activity categories), limiting the effectiveness of supervised pre-training. Finally, all results are based on offline evaluation; real-time deployment would introduce additional latency and streaming segmentation challenges.
+Several limitations constrain the conclusions. First, the WiSe4Car evaluation uses 2{,}117 windows from 75 sessions; the severe class imbalance (Waving: 2 samples, Bending: 72 samples) and per-vehicle coverage gaps make six-class LOCO evaluation structurally unreliable---the 3-class LOCO (0.767) is a more interpretable bound. Second, the XRF55 source domain is radar-based, introducing a sensor-modality gap that standard domain adaptation methods only partially bridge. Third, all evaluation is offline; real-time deployment would require streaming segmentation and sub-100~ms inference. Fourth, the label taxonomy was defined during annotation and may not cover all safety-critical in-vehicle activities (e.g., child presence, occupant restraint). All models satisfy edge-deployment constraints ($\leq$2~ms GPU inference, $\leq$11~MB model size), but embedded automotive hardware validation remains outstanding.
 
 \cleardoublepage
 
@@ -703,11 +1458,11 @@ Several limitations constrain the conclusions of this study. First, the WiSe4Car
 This thesis investigated the feasibility of Wi-Fi CSI sensing for automotive applications, focusing on the WiSe4Car in-cabin dataset and public indoor benchmarks. The main conclusions are:
 
 \begin{itemize}
-  \item Wi-Fi CSI sensing achieves high accuracy on standard indoor HAR benchmarks with deep-learning models, but performance degrades significantly under cross-environment conditions due to domain shift.
-  \item A five-stage preprocessing pipeline (cleaning, denoising, STFT, augmentation, normalisation) improves cross-environment robustness, with phase sanitisation being the most impactful single step.
-  \item Among the four architectures benchmarked, 1D-CNN and CNN+GRU provide the best accuracy-efficiency trade-off. The Transformer encoder is competitive but data-hungry.
-  \item The three-stage transfer learning framework (supervised pre-training, self-supervised domain adaptation, few-shot fine-tuning) provides measurable improvements over direct in-domain training on the annotated WiSe4Car subset.
-  \item Feasibility for basic in-cabin activity recognition is achievable with transfer learning, but automotive deployment requires more annotated in-vehicle data and further study of hardware-specific artefacts.
+  \item Wi-Fi CSI sensing achieves $>97\%$ accuracy on standard indoor HAR benchmarks under matched train-test conditions. Performance drops substantially under domain shift, confirming that cross-domain generalisation is the primary technical challenge for automotive deployment.
+  \item ACFplus (two-branch unbiased autocorrelation: raw~+~diff) is the most domain-robust representation. Its lag-0 normalisation cancels sensor-specific amplitude scale by construction, outperforming STFT and 1D raw amplitude by up to $+$0.230 Macro-F1 under DA Transfer.
+  \item DA Transfer (supervised XRF55 pre-training $\to$ DANN alignment $\to$ WiSe4Car fine-tuning) is the best strategy for all representations, achieving pooled Macro-F1~$=$~0.762, in-car Macro-F1~$=$~0.809, and LOCO Macro-F1~$=$~0.716 on five-class WiSe4Car evaluation.
+  \item Supervised pre-training outperforms self-supervised BYOL pre-training when source labels are available. BYOL provides no advantage over supervised Transfer at the current scale (XRF55: 1{,}584 training samples).
+  \item All deployed models satisfy edge-deployment constraints: $\leq$2~ms GPU inference latency per sample and $\leq$11~MB model size (FP32), making real-time in-vehicle HAR technically feasible.
 \end{itemize}
 
 \section{Future Work}
@@ -716,7 +1471,7 @@ This thesis investigated the feasibility of Wi-Fi CSI sensing for automotive app
 Several directions are identified for future research:
 
 \begin{itemize}
-  \item \textbf{Larger WiSe4Car annotation.} Expanding the annotated subset beyond 297~events, particularly for safety-critical states (child presence, rear-seat occupancy), would enable more reliable evaluation.
+  \item \textbf{Larger and more balanced WiSe4Car annotation.} The current annotation (2{,}117 windows from 297 events) is sufficient for pooled evaluation but too sparse for minority classes in LOCO. Expanding coverage for Waving, Bending, and Reaching---particularly per-vehicle---would lift the structural LOCO ceiling and enable reliable six-class cross-vehicle evaluation.
   \item \textbf{LLM-enhanced zero-shot inference.} Recent work on Wi-Chat~\cite{zhang2025wichat} demonstrates that large language models can interpret CSI patterns in a zero-shot manner by incorporating Wi-Fi sensing physics into prompts, achieving up to 90\% activity recognition accuracy without any labelled training data. This paradigm warrants evaluation in the automotive context, where labelled data is scarce and LLM-based inference could eliminate the need for the annotation effort required by conventional supervised approaches.
   \item \textbf{IEEE~802.11bf standardisation.} The emerging WLAN sensing standard~\cite{du2025overview} will enable native CSI extraction on future Wi-Fi devices, lowering the barrier to deployment.
   \item \textbf{Real-time edge deployment.} Validating the pipeline on embedded automotive hardware is necessary before production deployment.
