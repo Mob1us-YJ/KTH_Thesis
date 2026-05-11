@@ -1,0 +1,23 @@
+{
+  "session_id": "102_c1",
+  "video_file": "102_c1.avi",
+  "video_duration_seconds": 120.04,
+  "video_fps": 25.0,
+  "total_frames": 3001,
+  "annotation_count": 1,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 4.92,
+      "end_time": 58.52,
+      "start_frame": 123,
+      "end_frame": 1463,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-04T14:22:00.520925",
+  "version": "1.0"
+}

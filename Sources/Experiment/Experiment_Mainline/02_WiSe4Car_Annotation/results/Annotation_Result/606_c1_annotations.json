@@ -1,0 +1,63 @@
+{
+  "session_id": "606_c1",
+  "video_file": "606_c1.avi",
+  "video_duration_seconds": 120.05882352941177,
+  "video_fps": 17.0,
+  "total_frames": 2041,
+  "annotation_count": 5,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.9411764705882353,
+      "end_time": 5.0,
+      "start_frame": 16,
+      "end_frame": 85,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 7.588235294117647,
+      "end_time": 13.352941176470589,
+      "start_frame": 129,
+      "end_frame": 227,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 16.352941176470587,
+      "end_time": 35.705882352941174,
+      "start_frame": 278,
+      "end_frame": 607,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 35.05882352941177,
+      "end_time": 47.05882352941177,
+      "start_frame": 596,
+      "end_frame": 800,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 66.6470588235294,
+      "end_time": 92.88235294117646,
+      "start_frame": 1133,
+      "end_frame": 1579,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:10:50.886080",
+  "version": "1.0"
+}

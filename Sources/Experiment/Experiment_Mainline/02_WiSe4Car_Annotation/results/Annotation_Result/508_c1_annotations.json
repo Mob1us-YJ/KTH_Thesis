@@ -1,0 +1,73 @@
+{
+  "session_id": "508_c1",
+  "video_file": "508_c1.avi",
+  "video_duration_seconds": 120.05555555555556,
+  "video_fps": 18.0,
+  "total_frames": 2161,
+  "annotation_count": 6,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 6.055555555555555,
+      "end_time": 8.222222222222221,
+      "start_frame": 109,
+      "end_frame": 148,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 10.5,
+      "end_time": 16.833333333333332,
+      "start_frame": 189,
+      "end_frame": 303,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 21.11111111111111,
+      "end_time": 33.05555555555556,
+      "start_frame": 380,
+      "end_frame": 595,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 35.55555555555556,
+      "end_time": 45.44444444444444,
+      "start_frame": 640,
+      "end_frame": 818,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 56.55555555555556,
+      "end_time": 69.83333333333333,
+      "start_frame": 1018,
+      "end_frame": 1257,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 91.88888888888889,
+      "end_time": 100.22222222222223,
+      "start_frame": 1654,
+      "end_frame": 1804,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:54:08.483691",
+  "version": "1.0"
+}

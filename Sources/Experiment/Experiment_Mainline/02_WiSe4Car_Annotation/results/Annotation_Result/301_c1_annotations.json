@@ -1,0 +1,93 @@
+{
+  "session_id": "301_c1",
+  "video_file": "301_c1.avi",
+  "video_duration_seconds": 120.04545454545455,
+  "video_fps": 22.0,
+  "total_frames": 2641,
+  "annotation_count": 8,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.45454545454545453,
+      "end_time": 4.7727272727272725,
+      "start_frame": 10,
+      "end_frame": 105,
+      "action": "waving",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 4.7727272727272725,
+      "end_time": 33.81818181818182,
+      "start_frame": 105,
+      "end_frame": 744,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 34.40909090909091,
+      "end_time": 41.72727272727273,
+      "start_frame": 757,
+      "end_frame": 918,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 57.90909090909091,
+      "end_time": 64.4090909090909,
+      "start_frame": 1274,
+      "end_frame": 1417,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 63.90909090909091,
+      "end_time": 68.4090909090909,
+      "start_frame": 1406,
+      "end_frame": 1505,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 68.63636363636364,
+      "end_time": 84.68181818181819,
+      "start_frame": 1510,
+      "end_frame": 1863,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 87.13636363636364,
+      "end_time": 95.45454545454545,
+      "start_frame": 1917,
+      "end_frame": 2100,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "start_time": 109.68181818181819,
+      "end_time": 119.54545454545455,
+      "start_frame": 2413,
+      "end_frame": 2630,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T10:20:18.566393",
+  "version": "1.0"
+}

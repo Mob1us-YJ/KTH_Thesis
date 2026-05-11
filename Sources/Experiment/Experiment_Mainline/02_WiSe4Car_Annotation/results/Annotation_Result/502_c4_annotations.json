@@ -1,0 +1,53 @@
+{
+  "session_id": "502_c4",
+  "video_file": "502_c4.avi",
+  "video_duration_seconds": 120.03846153846153,
+  "video_fps": 26.0,
+  "total_frames": 3121,
+  "annotation_count": 4,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 8.038461538461538,
+      "end_time": 16.115384615384617,
+      "start_frame": 209,
+      "end_frame": 419,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 23.846153846153847,
+      "end_time": 29.115384615384617,
+      "start_frame": 620,
+      "end_frame": 757,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 45.03846153846154,
+      "end_time": 60.03846153846154,
+      "start_frame": 1171,
+      "end_frame": 1561,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 83.0,
+      "end_time": 101.0,
+      "start_frame": 2158,
+      "end_frame": 2626,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:32:48.852893",
+  "version": "1.0"
+}

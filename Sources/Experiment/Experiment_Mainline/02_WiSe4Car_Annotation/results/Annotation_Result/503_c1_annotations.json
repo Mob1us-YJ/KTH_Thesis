@@ -1,0 +1,83 @@
+{
+  "session_id": "503_c1",
+  "video_file": "503_c1.avi",
+  "video_duration_seconds": 120.05,
+  "video_fps": 20.0,
+  "total_frames": 2401,
+  "annotation_count": 7,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.0,
+      "end_time": 3.7,
+      "start_frame": 0,
+      "end_frame": 74,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 5.75,
+      "end_time": 22.75,
+      "start_frame": 115,
+      "end_frame": 455,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 21.65,
+      "end_time": 26.1,
+      "start_frame": 433,
+      "end_frame": 522,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 26.1,
+      "end_time": 30.0,
+      "start_frame": 522,
+      "end_frame": 600,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 43.05,
+      "end_time": 49.9,
+      "start_frame": 861,
+      "end_frame": 998,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 68.9,
+      "end_time": 78.85,
+      "start_frame": 1378,
+      "end_frame": 1577,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 111.85,
+      "end_time": 120.0,
+      "start_frame": 2237,
+      "end_frame": 2400,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:36:17.516153",
+  "version": "1.0"
+}

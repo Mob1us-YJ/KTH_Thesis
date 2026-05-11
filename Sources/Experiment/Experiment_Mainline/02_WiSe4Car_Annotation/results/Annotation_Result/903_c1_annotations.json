@@ -1,0 +1,73 @@
+{
+  "session_id": "903_c1",
+  "video_file": "903_c1.avi",
+  "video_duration_seconds": 120.0,
+  "video_fps": 22.0,
+  "total_frames": 2640,
+  "annotation_count": 6,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 3.0454545454545454,
+      "end_time": 19.045454545454547,
+      "start_frame": 67,
+      "end_frame": 419,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 20.40909090909091,
+      "end_time": 30.40909090909091,
+      "start_frame": 449,
+      "end_frame": 669,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 42.40909090909091,
+      "end_time": 52.40909090909091,
+      "start_frame": 933,
+      "end_frame": 1153,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 79.4090909090909,
+      "end_time": 82.4090909090909,
+      "start_frame": 1747,
+      "end_frame": 1813,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 99.4090909090909,
+      "end_time": 108.4090909090909,
+      "start_frame": 2187,
+      "end_frame": 2385,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 108.4090909090909,
+      "end_time": 115.4090909090909,
+      "start_frame": 2385,
+      "end_frame": 2539,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:29:45.540113",
+  "version": "1.0"
+}

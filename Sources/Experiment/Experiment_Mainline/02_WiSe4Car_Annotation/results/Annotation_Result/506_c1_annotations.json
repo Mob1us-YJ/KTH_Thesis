@@ -1,0 +1,63 @@
+{
+  "session_id": "506_c1",
+  "video_file": "506_c1.avi",
+  "video_duration_seconds": 120.05,
+  "video_fps": 20.0,
+  "total_frames": 2401,
+  "annotation_count": 5,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 5.75,
+      "end_time": 23.35,
+      "start_frame": 115,
+      "end_frame": 467,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 38.65,
+      "end_time": 48.65,
+      "start_frame": 773,
+      "end_frame": 973,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 80.95,
+      "end_time": 86.95,
+      "start_frame": 1619,
+      "end_frame": 1739,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 94.5,
+      "end_time": 101.8,
+      "start_frame": 1890,
+      "end_frame": 2036,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 113.65,
+      "end_time": 120.0,
+      "start_frame": 2273,
+      "end_frame": 2400,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:57:24.500629",
+  "version": "1.0"
+}

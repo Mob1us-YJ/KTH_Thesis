@@ -1,0 +1,23 @@
+{
+  "session_id": "905_c1",
+  "video_file": "905_c1.avi",
+  "video_duration_seconds": 120.0,
+  "video_fps": 22.0,
+  "total_frames": 2640,
+  "annotation_count": 1,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 11.181818181818182,
+      "end_time": 92.18181818181819,
+      "start_frame": 246,
+      "end_frame": 2028,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:32:05.582877",
+  "version": "1.0"
+}

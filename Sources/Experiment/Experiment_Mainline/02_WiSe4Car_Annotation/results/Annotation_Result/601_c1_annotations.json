@@ -1,0 +1,93 @@
+{
+  "session_id": "601_c1",
+  "video_file": "601_c1.avi",
+  "video_duration_seconds": 120.0,
+  "video_fps": 17.0,
+  "total_frames": 2040,
+  "annotation_count": 8,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 6.411764705882353,
+      "end_time": 12.882352941176471,
+      "start_frame": 109,
+      "end_frame": 219,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 13.294117647058824,
+      "end_time": 18.705882352941178,
+      "start_frame": 226,
+      "end_frame": 318,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 28.88235294117647,
+      "end_time": 33.529411764705884,
+      "start_frame": 491,
+      "end_frame": 570,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 45.294117647058826,
+      "end_time": 46.11764705882353,
+      "start_frame": 770,
+      "end_frame": 784,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 48.0,
+      "end_time": 52.05882352941177,
+      "start_frame": 816,
+      "end_frame": 885,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 53.11764705882353,
+      "end_time": 65.82352941176471,
+      "start_frame": 903,
+      "end_frame": 1119,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 65.47058823529412,
+      "end_time": 70.52941176470588,
+      "start_frame": 1113,
+      "end_frame": 1199,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "start_time": 70.88235294117646,
+      "end_time": 83.52941176470588,
+      "start_frame": 1205,
+      "end_frame": 1420,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:02:39.056698",
+  "version": "1.0"
+}

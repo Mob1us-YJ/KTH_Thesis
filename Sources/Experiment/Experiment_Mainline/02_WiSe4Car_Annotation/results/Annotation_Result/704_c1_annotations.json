@@ -1,0 +1,33 @@
+{
+  "session_id": "704_c1",
+  "video_file": "704_c1.avi",
+  "video_duration_seconds": 120.0,
+  "video_fps": 25.0,
+  "total_frames": 3000,
+  "annotation_count": 2,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 2.2,
+      "end_time": 81.2,
+      "start_frame": 55,
+      "end_frame": 2030,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 85.2,
+      "end_time": 89.2,
+      "start_frame": 2130,
+      "end_frame": 2230,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:21:18.564223",
+  "version": "1.0"
+}

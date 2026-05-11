@@ -1,0 +1,53 @@
+{
+  "session_id": "604_c5",
+  "video_file": "604_c5.avi",
+  "video_duration_seconds": 120.05882352941177,
+  "video_fps": 17.0,
+  "total_frames": 2041,
+  "annotation_count": 4,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 5.117647058823529,
+      "end_time": 16.705882352941178,
+      "start_frame": 87,
+      "end_frame": 284,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 36.8235294117647,
+      "end_time": 43.8235294117647,
+      "start_frame": 626,
+      "end_frame": 745,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 45.8235294117647,
+      "end_time": 67.82352941176471,
+      "start_frame": 779,
+      "end_frame": 1153,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 103.3529411764706,
+      "end_time": 116.17647058823529,
+      "start_frame": 1757,
+      "end_frame": 1975,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:07:50.724811",
+  "version": "1.0"
+}

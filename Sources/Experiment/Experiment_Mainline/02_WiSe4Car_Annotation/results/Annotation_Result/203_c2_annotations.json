@@ -1,0 +1,83 @@
+{
+  "session_id": "203_c2",
+  "video_file": "203_c2.avi",
+  "video_duration_seconds": 120.04,
+  "video_fps": 25.0,
+  "total_frames": 3001,
+  "annotation_count": 7,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.0,
+      "end_time": 4.6,
+      "start_frame": 0,
+      "end_frame": 115,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 6.28,
+      "end_time": 14.16,
+      "start_frame": 157,
+      "end_frame": 354,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 25.84,
+      "end_time": 43.56,
+      "start_frame": 646,
+      "end_frame": 1089,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 44.16,
+      "end_time": 60.72,
+      "start_frame": 1104,
+      "end_frame": 1518,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 62.12,
+      "end_time": 73.68,
+      "start_frame": 1553,
+      "end_frame": 1842,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 73.68,
+      "end_time": 79.92,
+      "start_frame": 1842,
+      "end_frame": 1998,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 81.28,
+      "end_time": 96.28,
+      "start_frame": 2032,
+      "end_frame": 2407,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T10:02:06.992210",
+  "version": "1.0"
+}

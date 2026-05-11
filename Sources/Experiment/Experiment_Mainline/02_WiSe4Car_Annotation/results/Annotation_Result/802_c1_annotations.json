@@ -1,0 +1,23 @@
+{
+  "session_id": "802_c1",
+  "video_file": "802_c1.avi",
+  "video_duration_seconds": 120.04545454545455,
+  "video_fps": 22.0,
+  "total_frames": 2641,
+  "annotation_count": 1,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 2.0,
+      "end_time": 116.54545454545455,
+      "start_frame": 44,
+      "end_frame": 2564,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:27:47.494397",
+  "version": "1.0"
+}

@@ -1,0 +1,63 @@
+{
+  "session_id": "302_c1",
+  "video_file": "302_c1.avi",
+  "video_duration_seconds": 119.95454545454545,
+  "video_fps": 22.0,
+  "total_frames": 2639,
+  "annotation_count": 5,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 6.318181818181818,
+      "end_time": 10.363636363636363,
+      "start_frame": 139,
+      "end_frame": 228,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 12.954545454545455,
+      "end_time": 16.40909090909091,
+      "start_frame": 285,
+      "end_frame": 361,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 17.454545454545453,
+      "end_time": 29.636363636363637,
+      "start_frame": 384,
+      "end_frame": 652,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 49.45454545454545,
+      "end_time": 70.72727272727273,
+      "start_frame": 1088,
+      "end_frame": 1556,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 107.18181818181819,
+      "end_time": 115.0909090909091,
+      "start_frame": 2358,
+      "end_frame": 2532,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T12:11:16.405143",
+  "version": "1.0"
+}

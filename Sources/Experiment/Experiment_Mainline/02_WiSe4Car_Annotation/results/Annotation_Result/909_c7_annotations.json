@@ -1,0 +1,43 @@
+{
+  "session_id": "909_c7",
+  "video_file": "909_c7.avi",
+  "video_duration_seconds": 120.0,
+  "video_fps": 25.0,
+  "total_frames": 3000,
+  "annotation_count": 3,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 4.44,
+      "end_time": 16.96,
+      "start_frame": 111,
+      "end_frame": 424,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 18.96,
+      "end_time": 23.96,
+      "start_frame": 474,
+      "end_frame": 599,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 39.96,
+      "end_time": 47.96,
+      "start_frame": 999,
+      "end_frame": 1199,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T11:04:22.691115",
+  "version": "1.0"
+}

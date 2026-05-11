@@ -1,0 +1,113 @@
+{
+  "session_id": "508_c4",
+  "video_file": "508_c4.avi",
+  "video_duration_seconds": 120.03846153846153,
+  "video_fps": 26.0,
+  "total_frames": 3121,
+  "annotation_count": 10,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.0,
+      "end_time": 11.346153846153847,
+      "start_frame": 0,
+      "end_frame": 295,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 14.23076923076923,
+      "end_time": 25.346153846153847,
+      "start_frame": 370,
+      "end_frame": 659,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 51.65384615384615,
+      "end_time": 56.73076923076923,
+      "start_frame": 1343,
+      "end_frame": 1475,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 59.23076923076923,
+      "end_time": 61.34615384615385,
+      "start_frame": 1540,
+      "end_frame": 1595,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 62.0,
+      "end_time": 69.34615384615384,
+      "start_frame": 1612,
+      "end_frame": 1803,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 69.61538461538461,
+      "end_time": 71.92307692307692,
+      "start_frame": 1810,
+      "end_frame": 1870,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 71.84615384615384,
+      "end_time": 73.53846153846153,
+      "start_frame": 1868,
+      "end_frame": 1912,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "start_time": 73.88461538461539,
+      "end_time": 86.88461538461539,
+      "start_frame": 1921,
+      "end_frame": 2259,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "start_time": 93.3076923076923,
+      "end_time": 105.3076923076923,
+      "start_frame": 2426,
+      "end_frame": 2738,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 10,
+      "start_time": 111.11538461538461,
+      "end_time": 116.38461538461539,
+      "start_frame": 2889,
+      "end_frame": 3026,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:50:32.807690",
+  "version": "1.0"
+}

@@ -1,0 +1,33 @@
+{
+  "session_id": "204_c2",
+  "video_file": "204_c2.avi",
+  "video_duration_seconds": 120.04,
+  "video_fps": 25.0,
+  "total_frames": 3001,
+  "annotation_count": 2,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 2.16,
+      "end_time": 8.0,
+      "start_frame": 54,
+      "end_frame": 200,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 32.64,
+      "end_time": 63.96,
+      "start_frame": 816,
+      "end_frame": 1599,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T09:52:58.818523",
+  "version": "1.0"
+}

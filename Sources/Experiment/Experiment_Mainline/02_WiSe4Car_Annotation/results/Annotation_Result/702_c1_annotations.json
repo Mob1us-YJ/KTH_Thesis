@@ -1,0 +1,23 @@
+{
+  "session_id": "702_c1",
+  "video_file": "702_c1.avi",
+  "video_duration_seconds": 120.04,
+  "video_fps": 25.0,
+  "total_frames": 3001,
+  "annotation_count": 1,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 3.04,
+      "end_time": 111.96,
+      "start_frame": 76,
+      "end_frame": 2799,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T10:19:27.107539",
+  "version": "1.0"
+}

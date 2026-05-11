@@ -1,0 +1,83 @@
+{
+  "session_id": "103_c1",
+  "video_file": "103_c1.avi",
+  "video_duration_seconds": 120.04,
+  "video_fps": 25.0,
+  "total_frames": 3001,
+  "annotation_count": 7,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 0.0,
+      "end_time": 3.4,
+      "start_frame": 0,
+      "end_frame": 85,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 0.0,
+      "end_time": 2.08,
+      "start_frame": 0,
+      "end_frame": 52,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 2.64,
+      "end_time": 14.92,
+      "start_frame": 66,
+      "end_frame": 373,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 19.0,
+      "end_time": 23.88,
+      "start_frame": 475,
+      "end_frame": 597,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 28.28,
+      "end_time": 33.92,
+      "start_frame": 707,
+      "end_frame": 848,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 34.28,
+      "end_time": 42.0,
+      "start_frame": 857,
+      "end_frame": 1050,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 50.12,
+      "end_time": 57.92,
+      "start_frame": 1253,
+      "end_frame": 1448,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T09:25:36.775469",
+  "version": "1.0"
+}

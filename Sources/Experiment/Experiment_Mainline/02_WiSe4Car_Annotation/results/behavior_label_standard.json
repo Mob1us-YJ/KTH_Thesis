@@ -1,0 +1,37 @@
+{
+  "annotation_standard": {
+    "version": "1.0",
+    "behavior_categories": {
+      "sitting": {
+        "id": 1,
+        "name": "Sitting",
+        "description": "People sitting in the car seat, no obvious body movement."
+      },
+      "reaching": {
+        "id": 2,
+        "name": "Reaching",
+        "description": "People reaching for objects in the car or in their pockets, or reaching their hats."
+      },
+      "turning": {
+        "id": 3,
+        "name": "Turning",
+        "description": "People turning their bodies or heads while seated, involving changes in body orientation."
+      },
+      "bending": {
+        "id": 4,
+        "name": "Bending",
+        "description": "People bending forward or backward, with obvious changes in body posture."
+      },
+      "waving": {
+        "id": 5,
+        "name": "Waving",
+        "description": "People waving their hands."
+      },
+      "using_phone": {
+        "id": 6,
+        "name": "Using Phone",
+        "description": "People using phone, holding the phone, looking at the screen, and interacting with the phone"
+      }
+    }
+  }
+}

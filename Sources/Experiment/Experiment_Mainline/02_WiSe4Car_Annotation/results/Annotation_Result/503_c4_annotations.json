@@ -1,0 +1,103 @@
+{
+  "session_id": "503_c4",
+  "video_file": "503_c4.avi",
+  "video_duration_seconds": 120.03846153846153,
+  "video_fps": 26.0,
+  "total_frames": 3121,
+  "annotation_count": 9,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 9.307692307692308,
+      "end_time": 18.26923076923077,
+      "start_frame": 242,
+      "end_frame": 475,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 21.653846153846153,
+      "end_time": 33.30769230769231,
+      "start_frame": 563,
+      "end_frame": 866,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 35.15384615384615,
+      "end_time": 44.38461538461539,
+      "start_frame": 914,
+      "end_frame": 1154,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 44.38461538461539,
+      "end_time": 62.88461538461539,
+      "start_frame": 1154,
+      "end_frame": 1635,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "start_time": 63.26923076923077,
+      "end_time": 71.26923076923077,
+      "start_frame": 1645,
+      "end_frame": 1853,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "start_time": 72.34615384615384,
+      "end_time": 77.07692307692308,
+      "start_frame": 1881,
+      "end_frame": 2004,
+      "action": "bending",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "start_time": 77.88461538461539,
+      "end_time": 88.92307692307692,
+      "start_frame": 2025,
+      "end_frame": 2312,
+      "action": "using_phone",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "start_time": 88.34615384615384,
+      "end_time": 96.03846153846153,
+      "start_frame": 2297,
+      "end_frame": 2497,
+      "action": "reaching",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "start_time": 94.5,
+      "end_time": 107.92307692307692,
+      "start_frame": 2457,
+      "end_frame": 2806,
+      "action": "turning",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-09T09:43:26.607135",
+  "version": "1.0"
+}

@@ -1,0 +1,53 @@
+{
+  "session_id": "305_c1",
+  "video_file": "305_c1.avi",
+  "video_duration_seconds": 120.04545454545455,
+  "video_fps": 22.0,
+  "total_frames": 2641,
+  "annotation_count": 4,
+  "annotations": [
+    {
+      "id": 1,
+      "start_time": 8.409090909090908,
+      "end_time": 21.954545454545453,
+      "start_frame": 185,
+      "end_frame": 483,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "start_time": 30.59090909090909,
+      "end_time": 46.77272727272727,
+      "start_frame": 673,
+      "end_frame": 1029,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "start_time": 48.95454545454545,
+      "end_time": 61.04545454545455,
+      "start_frame": 1077,
+      "end_frame": 1343,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "start_time": 66.18181818181819,
+      "end_time": 76.5909090909091,
+      "start_frame": 1456,
+      "end_frame": 1685,
+      "action": "sitting",
+      "confidence": 1.0,
+      "notes": ""
+    }
+  ],
+  "annotator": "manual",
+  "annotation_date": "2026-03-05T12:13:11.823791",
+  "version": "1.0"
+}
