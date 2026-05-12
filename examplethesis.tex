@@ -467,10 +467,10 @@ Figure~\ref{fig:pipeline} illustrates the overall pipeline. The three stages are
 ]
   \node[box] (s1)
     {\textbf{Stage~I: Indoor Benchmarking} \quad
-     UT-HAR $\cdot$ NTU-Fi~HAR $\cdot$ Widar3.0};
+     UT-HAR $\cdot$ NTU-Fi~HAR $\cdot$ NTU-Human~ID};
   \node[box, below=of s1] (bb)
     {Backbone Selection \quad
-     MLP $\cdot$ 1D-CNN $\cdot$ CNN+GRU $\cdot$ ResNet-1D $\cdot$ Multiscale~CNN};
+     MLP $\cdot$ CNN $\cdot$ RNN $\cdot$ CNN+GRU $\cdot$ ViT};
   \node[box, below=of bb] (s2)
     {\textbf{Stage~II: Automotive Dataset Construction} \quad
      XRF55 source $\cdot$ WiSe4Car annotated target};
@@ -508,27 +508,27 @@ Three public CSI datasets are used for indoor benchmarking. Table~\ref{tab:datas
 \label{tab:datasets}
 \centering
 \small
-\begin{tabular}{llrrlr}
+\begin{tabular}{llrllr}
 \toprule
-\textbf{Dataset} & \textbf{Hardware} & \textbf{Subcarriers} & \textbf{Classes} & \textbf{Environments} & \textbf{Role} \\
+\textbf{Dataset} & \textbf{Hardware} & \textbf{Sub-carr.} & \textbf{Task} & \textbf{Environments} & \textbf{Role} \\
 \midrule
-UT-HAR     & Intel 5300  & 30  & 7  & 1 room  & primary benchmark \\
-NTU-Fi HAR & Atheros     & 114 & 6  & 1 room  & primary benchmark \\
-Widar3.0   & Intel 5300  & 30  & 22 & 3 rooms & domain-shift reference \\
+UT-HAR          & Intel 5300 & 30  & 7-class HAR         & 1 room  & supervised benchmark \\
+NTU-Fi HAR      & Atheros    & 114 & 6-class HAR         & 1 room  & supervised benchmark \\
+NTU-Human~ID    & Atheros    & 114 & 14-subject ID (SSL) & 1 room  & SSL fine-tune benchmark \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 coarse activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC at 250 time steps per sample across 30 subcarriers. It validates the basic pipeline under standard SenseFi conditions.
+\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 coarse activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC at 250 time steps per sample across 30 subcarriers. Its single-room, well-controlled setting serves as a primary supervised benchmark to establish baseline accuracy and train--test gap.
 
-\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114 subcarriers. Its different hardware and cleaner label structure make it a complementary test of model stability. The dataset also includes a 14-subject Human Identification split used to validate the self-supervised transfer objective in isolation.
+\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114 subcarriers. The different hardware platform and cleaner label structure make it a complementary test of architecture stability under a different subcarrier count and signal characteristic.
 
-\textbf{Widar3.0}~\cite{zhang2021widar3,qian2017widar,qian2018widar2} covers 22 gesture classes across 3 rooms, 5 user orientations, and 5 locations. Rather than a primary benchmark, Widar3.0 serves as a reference for cross-room domain shift, illustrating the performance degradation expected when a model trained in one environment is deployed in another without adaptation.
+\textbf{NTU-Human ID}~\cite{yang2023sensefi} is the 14-subject person-identification split accompanying the NTU-Fi corpus, recorded on the same Atheros hardware. Rather than evaluating supervised classification, this split is used as a self-supervised (SSL) fine-tuning benchmark: the five model backbones are pre-trained with a contrastive objective on unlabelled NTU-Fi sequences and then fine-tuned on NTU-Human ID labels. This isolates the backbone's ability to learn transferable representations without class supervision, which is directly relevant to the low-label automotive setting.
 
 \subsection{Baseline Model Families}
 \label{sec:architectures}
 
-Five model families are benchmarked, chosen to span the design space from purely feedforward to multi-scale convolutional and recurrent architectures. Table~\ref{tab:models} summarises each family and its role.
+Five model families are benchmarked, chosen to span the design space from purely feedforward to attention-based architectures. Table~\ref{tab:models} summarises each family and its role.
 
 \begin{table}[!ht]
 \caption{Model families benchmarked in Stage~I and their roles in the study.}
@@ -539,16 +539,16 @@ Five model families are benchmarked, chosen to span the design space from purely
 \toprule
 \textbf{Model} & \textbf{Family} & \textbf{Role} \\
 \midrule
-MLP            & Feedforward     & Lower bound; confirms whether structured models are necessary \\
-LeNet (1D-CNN) & 1D Conv         & Lightweight temporal feature extractor; baseline for raw CSI sequences \\
-CNN+GRU        & Conv + \glsadd{RNN}RNN      & Combines local feature extraction with explicit temporal memory \\
-ResNet-1D      & Residual Conv   & Deep residual architecture with skip connections \\
-Multiscale CNN & Multi-resolution & Parallel conv branches at multiple kernel sizes to capture both fast (hand motion) and slow (postural shift) CSI dynamics \\
+MLP      & Feedforward         & Lower bound; confirms whether temporal structure is necessary \\
+CNN      & 1D Conv             & Lightweight local-pattern extractor; fast convergence on short CSI sequences \\
+\glsadd{RNN}RNN      & Recurrent           & Explicit sequential memory; lower bound for recurrent models \\
+CNN+GRU  & Conv + Recurrent    & Combines local feature extraction with gated temporal memory \\
+ViT      & Transformer         & Patch-tokenised self-attention; captures long-range temporal dependencies \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The Multiscale CNN and ResNet-1D are the primary candidates for the transfer backbone because their capacity to process CSI at multiple temporal scales aligns well with the heterogeneous motion speeds present in WiSe4Car activities---from rapid phone interaction ($\approx 2$~Hz) to slow upper-body turns ($\approx 0.3$~Hz). The other three architectures serve as comparative baselines to bound the performance range.
+CNN and CNN+GRU are the primary candidates for the transfer backbone: CNN's compact parameter count limits overfitting on the small WiSe4Car label set, while CNN+GRU adds recurrent context suitable for the longer activity windows. ViT provides a strong attention-based comparison, though its larger parameter count warrants careful monitoring of train--test gap on the 297-event target corpus. MLP and RNN serve as lower bounds to bracket the performance range.
 
 \subsection{Training Protocol}
 \label{sec:trainprotocol}
@@ -653,6 +653,28 @@ The taxonomy covers coarse in-cabin behavioural states rather than a complete au
 \label{sec:xrf55source}
 
 XRF55~\cite{wang2024xrf55} is used as the supervised source domain because it provides a substantially larger and more diverse activity repertoire than UT-HAR and NTU-Fi HAR: 55 daily activities from 39 subjects over 100 days using a 256-subcarrier RF platform. Its role in this thesis is not to provide labels that directly match automotive activities, but to initialise a feature extractor with broad, motion-sensitive CSI representations before target adaptation. The 55 XRF55 classes are mapped to the 6 WiSe4Car classes by semantic grouping (Table~\ref{tab:taxonomy}), yielding a supervised pretraining corpus that shares the target label space. XRF55 is assigned domain identifier domain\_id~$=0$; WiSe4Car is assigned domain\_id~$=1$.
+
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Sitting.png}
+    \caption{Sitting}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Reaching.png}
+    \caption{Reaching}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Turning.png}
+    \caption{Turning}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_UsingPhone.png}
+    \caption{Using phone}
+  \end{subfigure}
+  \caption{XRF55 source-domain action examples for the four activity classes shared with the WiSe4Car target domain. Each frame is taken from a lab-collected RF recording session. The same activities appear in WiSe4Car (in-cabin, Wi-Fi~6) with varying body posture and sensor placement, constituting the domain shift that the transfer learning pipeline must bridge.}
+  \label{fig:xrf55_actions}
+\end{figure}
 
 \subsection{Cross-Dataset Input Alignment}
 \label{sec:preprocessing}
@@ -1009,9 +1031,9 @@ All experiments were conducted in Python~3.11 using PyTorch~2.2 on a workstation
 \section{Benchmark Experiment Setup}
 \label{sec:benchmark}
 
-Five architectures drawn from the SenseFi benchmark suite~\cite{yang2023sensefi} were evaluated on standard indoor CSI datasets: a fully connected \textbf{MLP}, a compact 1D convolutional network (\textbf{LeNet}), a vanilla \textbf{RNN}, a bidirectional LSTM (\textbf{BiLSTM}), and a hybrid \textbf{CNN+GRU}. These architectures span the design space from purely feedforward to hierarchical temporal models and serve as the primary reference baselines for the transfer learning experiments.
+Five architectures were evaluated on three standard indoor CSI datasets: a fully connected \textbf{MLP}, a compact 1D convolutional network (\textbf{CNN}), a vanilla \textbf{RNN}, a hybrid \textbf{CNN+GRU}, and a patch-tokenised \textbf{ViT} (Vision Transformer). These models span the design space from purely feedforward to attention-based architectures and serve as the primary reference baselines for the transfer learning experiments.
 
-Both UT-HAR and NTU-Fi HAR datasets were preprocessed through the SenseFi pipeline to produce amplitude-only feature matrices of shape $[N_{\text{samples}},\,250,\,30]$ and $[N_{\text{samples}},\,200,\,114]$, respectively. Training used the Adam optimiser at learning rate $10^{-3}$, batch size~64, and early stopping with patience~20 monitoring validation accuracy. A fixed random seed (42) was applied to all runs to ensure reproducibility.
+For supervised benchmarks, UT-HAR and NTU-Fi HAR were preprocessed through the SenseFi pipeline~\cite{yang2023sensefi} to produce amplitude-only feature matrices of shape $[N_{\text{samples}},\,250,\,30]$ and $[N_{\text{samples}},\,200,\,114]$, respectively. For the NTU-Human ID SSL benchmark, the same five backbones were first pre-trained with a contrastive self-supervised objective on unlabelled NTU-Fi sequences for 100 epochs, then fine-tuned on the 14-subject NTU-Human ID labels for 300 epochs. All supervised runs used the Adam optimiser at learning rate $10^{-3}$, batch size~64, and early stopping with patience~20 on validation accuracy. A fixed random seed (42) was applied throughout to ensure reproducibility.
 
 \section{WiSe4Car Annotation Protocol}
 \label{sec:annotation_protocol}
@@ -1159,7 +1181,7 @@ This chapter presents quantitative results for all completed experiments and ana
 
 \subsection{UT-HAR}
 
-Table~\ref{tab:uthar} reports top-1 test accuracy on the 7-class UT-HAR dataset. LeNet and CNN+GRU achieve the best test accuracy at 97.46\% and 97.13\%, respectively, both with train--test gaps below 3\%, indicating strong generalisation on this dataset. MLP reaches 91.64\% with a moderate gap (3.90\%). Vanilla RNN and BiLSTM underperform substantially at 75.87\% and 77.50\%, with the largest gaps (6.74\% and 4.00\%): purely recurrent architectures appear to lack sufficient discriminative capacity for the 7-class temporal patterns in UT-HAR.
+Table~\ref{tab:uthar} reports top-1 test accuracy on the 7-class UT-HAR dataset. CNN achieves the highest test accuracy at 96.8\% with a train--test gap of 2.6~pp, confirming that a compact convolutional extractor captures the seven activity patterns effectively. CNN+GRU reaches 91.0\% with a moderate gap (3.5~pp). ViT performs comparably to MLP (85.0\% vs.\ 84.0\%), suggesting that the relatively short, 30-subcarrier input limits the benefit of long-range self-attention on this dataset. RNN scores lowest at 82.6\%, with a marginally negative gap ($-$0.3~pp) indicating it converges to a suboptimal local minimum rather than overfitting.
 
 \begin{table}[!ht]
 \caption{UT-HAR benchmark results. Test accuracy (\%) and train--test gap.}
@@ -1169,55 +1191,58 @@ Table~\ref{tab:uthar} reports top-1 test accuracy on the 7-class UT-HAR dataset.
 \toprule
 \textbf{Model} & \textbf{Train Acc (\%)} & \textbf{Test Acc (\%)} & \textbf{Gap (pp)} \\
 \midrule
-MLP      & 95.54 & 91.64 & 3.90 \\
-LeNet    & 100.00 & \textbf{97.46} & 2.54 \\
-RNN      & 82.61  & 75.87 & 6.74 \\
-BiLSTM   & 81.50  & 77.50 & 4.00 \\
-CNN+GRU  & 99.42  & \textbf{97.13} & 2.29 \\
+MLP      &  84.7  &  84.0  &  0.7 \\
+CNN      &  99.4  & \textbf{96.8} &  2.6 \\
+RNN      &  82.3  &  82.6  & $-$0.3 \\
+CNN+GRU  &  94.5  &  91.0  &  3.5 \\
+ViT      &  86.5  &  85.0  &  1.5 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.88\linewidth]{figures/UTHAR_model_comparison.png}
-\caption{UT-HAR benchmark: training and test accuracy per model. LeNet and CNN+GRU achieve the smallest train--test gaps, indicating effective generalisation on this 7-class indoor dataset.}
+\includegraphics[width=0.88\linewidth]{figures/new/fig_uthar_train_test_bar.png}
+\caption{UT-HAR benchmark: training and test accuracy per model. CNN achieves the highest test accuracy (96.8\%) with a compact 2.6~pp train--test gap. ViT and MLP cluster near 84--85\%, while RNN scores lowest, indicating limited discriminative capacity for the 7-class temporal patterns.}
 \label{fig:uthar_results}
 \end{figure}
 
-The NTU-Fi HAR dataset provides a complementary benchmark with different activity classes and a higher-quality Atheros antenna array, allowing the architecture ranking observed on UT-HAR to be cross-validated on a distinct hardware and label set.
+The UT-HAR results establish the architecture ranking under fully supervised conditions. To further assess backbone quality under a more challenging, label-scarce regime relevant to the automotive setting, the following subsection evaluates all five models on the NTU-Human ID self-supervised fine-tuning task.
 
-\subsection{NTU-Fi HAR}
+\subsection{NTU-Human ID: SSL Fine-Tuning Benchmark}
+\label{sec:humanid}
 
-Table~\ref{tab:ntufi} reports results on the 6-class NTU-Fi HAR dataset. BiLSTM achieves perfect test accuracy (100.00\%), followed closely by CNN+GRU (99.62\%) and MLP (98.11\%). LeNet reaches 97.35\%. The vanilla RNN lags significantly at 85.23\%, with the largest observed train--test gap (9.75~pp), again confirming that it lacks the representational depth required for reliable CSI classification. The high accuracies across all non-RNN models reflect the comparatively coarse nature of the six NTU-Fi classes (box, circle, clean, fall, run, walk) and the relatively clean Atheros amplitude measurements.
+Table~\ref{tab:humanid} reports post-fine-tuning test accuracy on the 14-subject NTU-Human ID task, where each backbone was first pre-trained with a contrastive self-supervised objective and then fine-tuned with labels. This benchmark isolates the backbone's ability to form transferable representations without class supervision---the scenario most relevant to the automotive target domain where labelled data is scarce.
+
+CNN stands out with 96.6\% test accuracy and only a 3.4~pp train--test gap, demonstrating that its local convolutional features transfer effectively from the SSL pre-training phase. MLP also shows strong fine-tuning performance (88.3\%), likely because its simple projection head adapts easily under label supervision. In contrast, RNN (59.2\%), CNN+GRU (56.3\%), and ViT (56.8\%) all fall well below 60\%, with large train--test gaps (7--11~pp): their more complex temporal or attention-based encoders do not latch onto transferable representations under the contrastive objective alone, and the limited label set (14 subjects) is insufficient to correct this in fine-tuning. The strong CNN result directly supports its selection as the primary backbone for Stage~III.
 
 \begin{table}[!ht]
-\caption{NTU-Fi HAR benchmark results. Test accuracy (\%) and train--test gap.}
-\label{tab:ntufi}
+\caption{NTU-Human ID SSL fine-tuning benchmark. Backbones pre-trained with contrastive SSL, then fine-tuned on 14-subject person-identification labels.}
+\label{tab:humanid}
 \centering
 \begin{tabular}{lccc}
 \toprule
 \textbf{Model} & \textbf{Train Acc (\%)} & \textbf{Test Acc (\%)} & \textbf{Gap (pp)} \\
 \midrule
-MLP      & 100.00 & 98.11 & 1.89 \\
-LeNet    & 100.00 & 97.35 & 2.65 \\
-RNN      &  94.98 & 85.23 & 9.75 \\
-BiLSTM   &  99.79 & \textbf{100.00} & $-$0.21 \\
-CNN+GRU  & 100.00 & \textbf{99.62} & 0.38 \\
+MLP      &  98.7  &  88.3  & 10.4 \\
+CNN      & 100.0  & \textbf{96.6}  &  3.4 \\
+RNN      &  70.0  &  59.2  & 10.8 \\
+CNN+GRU  &  59.4  &  56.3  &  3.1 \\
+ViT      &  64.1  &  56.8  &  7.3 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.88\linewidth]{figures/ntufi_model_comparison.png}
-\caption{NTU-Fi HAR benchmark: training and test accuracy per model. BiLSTM and CNN+GRU achieve near-perfect accuracy, while vanilla RNN exhibits the largest train--test gap.}
-\label{fig:ntufi_results}
+\includegraphics[width=0.88\linewidth]{figures/new/fig_ssl_comparison.png}
+\caption{NTU-Human ID SSL fine-tuning benchmark. CNN achieves 96.6\% test accuracy with the smallest gap (3.4~pp), confirming it forms the most transferable representations under contrastive pre-training. RNN, CNN+GRU, and ViT all fall below 60\%, indicating poor SSL feature quality under this label-scarce regime.}
+\label{fig:humanid_results}
 \end{figure}
 
 \subsection{Architecture Selection for Transfer Learning}
 
-Across both benchmarks, LeNet (compact 1D-CNN) and CNN+GRU consistently achieve top-2 test accuracy with train--test gaps below 3~pp. These two architectures are the most suitable candidates for the XRF55 source pre-training stage. Vanilla RNN is eliminated due to its consistently low performance and high variance. Although BiLSTM achieves perfect accuracy on NTU-Fi HAR, its higher gap on UT-HAR (4.00~pp) suggests sensitivity to dataset characteristics, making CNN+GRU the preferred recurrent baseline for subsequent experiments.
+Across both benchmarks, CNN consistently achieves top-tier performance: best on UT-HAR (96.8\%) with the smallest supervised gap, and best on the SSL fine-tuning task (96.6\%) with only 3.4~pp generalisation gap. CNN+GRU performs competitively under full supervision (91.0\% on UT-HAR) but degrades significantly under SSL conditions (56.3\%), making it a weaker choice for the low-label automotive setting. ViT matches CNN+GRU on UT-HAR (85.0\%) but its large SSL gap (7.3~pp) and poor fine-tuning performance disqualify it as the primary backbone. RNN scores lowest on both benchmarks and is eliminated. CNN is therefore selected as the transfer backbone for Stage~III, with CNN+GRU retained as a secondary baseline.
 
 With the backbone selection complete, the focus shifts to the automotive target domain. The following section characterises the annotated WiSe4Car dataset, establishing the class distribution and per-vehicle coverage constraints that govern all subsequent target-domain evaluation.
 
