@@ -519,11 +519,11 @@ NTU-Human~ID    & Atheros    & 114 & 14-subject ID (SSL) & 1 room  & SSL fine-tu
 \end{tabular}
 \end{table}
 
-\textbf{UT-HAR}~\cite{yang2023sensefi} contains 7 coarse activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC at 250 time steps per sample across 30 subcarriers. Its single-room, well-controlled setting serves as a primary supervised benchmark to establish baseline accuracy and train--test gap.
+\textbf{UT-HAR}~\cite{yousefi2017survey} contains 7 coarse activity classes (lie down, fall, walk, pick up, run, sit down, stand up) recorded with an Intel 5300 NIC at 250 time steps per sample across 30 subcarriers. Its single-room, well-controlled setting serves as a primary supervised benchmark to establish baseline accuracy and train--test gap.
 
-\textbf{NTU-Fi HAR}~\cite{yang2023sensefi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114 subcarriers. The different hardware platform and cleaner label structure make it a complementary test of architecture stability under a different subcarrier count and signal characteristic.
+\textbf{NTU-Fi HAR}~\cite{yang2022efficientfi} provides 6 activity classes (box, circle, clean, fall, run, walk) collected with an Atheros chipset at 114 subcarriers. The different hardware platform and cleaner label structure make it a complementary test of architecture stability under a different subcarrier count and signal characteristic.
 
-\textbf{NTU-Human ID}~\cite{yang2023sensefi} is the 14-subject person-identification split accompanying the NTU-Fi corpus, recorded on the same Atheros hardware. Rather than evaluating supervised classification, this split is used as a self-supervised (SSL) fine-tuning benchmark: the five model backbones are pre-trained with a contrastive objective on unlabelled NTU-Fi sequences and then fine-tuned on NTU-Human ID labels. This isolates the backbone's ability to learn transferable representations without class supervision, which is directly relevant to the low-label automotive setting.
+\textbf{NTU-Human ID}~\cite{wang2022caution} is the 14-subject person-identification split accompanying the NTU-Fi corpus, recorded on the same Atheros hardware. Rather than evaluating supervised classification, this split is used as a self-supervised (SSL) fine-tuning benchmark: the five model backbones are pre-trained with a contrastive objective on unlabelled NTU-Fi sequences and then fine-tuned on NTU-Human ID labels. This isolates the backbone's ability to learn transferable representations without class supervision, which is directly relevant to the low-label automotive setting.
 
 \subsection{Baseline Model Families}
 \label{sec:architectures}
