@@ -654,28 +654,6 @@ The taxonomy covers coarse in-cabin behavioural states rather than a complete au
 
 XRF55~\cite{wang2024xrf55} is used as the supervised source domain because it provides a substantially larger and more diverse activity repertoire than UT-HAR and NTU-Fi HAR: 55 daily activities from 39 subjects over 100 days using a 256-subcarrier RF platform. Its role in this thesis is not to provide labels that directly match automotive activities, but to initialise a feature extractor with broad, motion-sensitive CSI representations before target adaptation. The 55 XRF55 classes are mapped to the 6 WiSe4Car classes by semantic grouping (Table~\ref{tab:taxonomy}), yielding a supervised pretraining corpus that shares the target label space. XRF55 is assigned domain identifier domain\_id~$=0$; WiSe4Car is assigned domain\_id~$=1$.
 
-\begin{figure}[!ht]
-  \centering
-  \begin{subfigure}[b]{0.23\linewidth}
-    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Sitting.png}
-    \caption{Sitting}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.23\linewidth}
-    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Reaching.png}
-    \caption{Reaching}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.23\linewidth}
-    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Turning.png}
-    \caption{Turning}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.23\linewidth}
-    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_UsingPhone.png}
-    \caption{Using phone}
-  \end{subfigure}
-  \caption{XRF55 source-domain action examples for the four activity classes shared with the WiSe4Car target domain. Each frame is taken from a lab-collected RF recording session. The same activities appear in WiSe4Car (in-cabin, Wi-Fi~6) with varying body posture and sensor placement, constituting the domain shift that the transfer learning pipeline must bridge.}
-  \label{fig:xrf55_actions}
-\end{figure}
-
 \subsection{Cross-Dataset Input Alignment}
 \label{sec:preprocessing}
 
@@ -1094,6 +1072,28 @@ The WiSe4Car dataset was annotated to produce the labelled events required for i
 \end{subfigure}
 \caption{Representative video frames (faces anonymised) for four of the six labelled WiSe4Car activity classes. Each frame was used during manual annotation to verify temporal boundaries of the labelled events in the corresponding CSI recordings.}
 \label{fig:action_examples}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Sitting.png}
+    \caption{Sitting}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Reaching.png}
+    \caption{Reaching}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_Turning.png}
+    \caption{Turning}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.23\linewidth}
+    \includegraphics[width=\linewidth]{figures/new/XRF55_Action_UsingPhone.png}
+    \caption{Using phone}
+  \end{subfigure}
+  \caption{XRF55 source-domain action examples for the four activity classes shared with the WiSe4Car target domain (cf.\ Figure~\ref{fig:action_examples}). Each frame is taken from a controlled lab recording session. The same activities appear in WiSe4Car under vehicle-cabin conditions with different body posture and sensor placement, constituting the domain shift the transfer learning pipeline must bridge.}
+  \label{fig:xrf55_actions}
 \end{figure}
 
 \section{CSI Feature Representation Design}
